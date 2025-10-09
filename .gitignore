@@ -1,0 +1,48 @@
+# Global Ignore for Monorepo
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Build artifacts
+dist/
+out/
+build/
+coverage/
+.next/
+.vercel/
+.vscode/
+.idea/
+logs/
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# Docs / Assets
+docs/**/*.bak
+docs/**/*.tmp
+docs/assets/raw/
+docs/**/*.svg.backup
+docs/**/*.fig
+docs/**/*.psd
+
+# Structurizr / PlantUML
+*.dsl.backup
+plantuml-diagrams/
+structurizr-workspace.json
+
+# Generated files
+*.pdf
+*.docx
+*.zip
+*.tar.gz
