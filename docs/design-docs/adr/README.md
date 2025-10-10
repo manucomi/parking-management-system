@@ -7,7 +7,7 @@ The goal is to make architectural thinking **transparent**, **traceable**, and *
 
 ---
 
-## 📘 How We Structure ADRs
+## How We Structure ADRs
 
 Each ADR follows this standard format:
 
@@ -21,7 +21,7 @@ This format follows the recommendations of [Michael Nygard’s ADR pattern](http
 
 ---
 
-## 🗂️ ADR Index
+## ADR Index
 
 | ID                                                          | Title                                             | Status      | Summary                                                                              |
 | ----------------------------------------------------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
@@ -32,7 +32,7 @@ This format follows the recommendations of [Michael Nygard’s ADR pattern](http
 
 ---
 
-## 🔄 Versioning & Lifecycle
+## Versioning & Lifecycle
 
 - New ADRs are created whenever a **significant technical decision** is made.
 - Once a decision is finalized, its status changes to **Accepted**.
@@ -40,7 +40,7 @@ This format follows the recommendations of [Michael Nygard’s ADR pattern](http
 
 ---
 
-## 🧩 Related Documentation
+## Related Documentation
 
 - [System Architecture Overview](../architecture/architecture-overview.md)
 - [Component Data Flow](../architecture/component-data-flow.md)

@@ -68,9 +68,9 @@ It focuses on **clear ownership**, **delegation of responsibilities**, and **col
 
 - PRs reviewed by Tech Lead or peer within 24h.
 - Use GitHub templates to document:
-  - What changed
-  - Why (linked to ADR or Jira ticket)
-  - How to test
+    - What changed
+    - Why (linked to ADR or Jira ticket)
+    - How to test
 
 ### Communication Channels
 
@@ -90,8 +90,6 @@ It focuses on **clear ownership**, **delegation of responsibilities**, and **col
 ---
 
 ## Leadership Philosophy
-
-> “A strong architecture is not just about code — it’s about clarity, communication, and ownership.”
 
 Key principles:
 

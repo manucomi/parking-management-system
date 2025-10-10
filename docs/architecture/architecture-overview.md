@@ -5,7 +5,7 @@ It follows a **three-tier architecture** with clear separation of concerns betwe
 
 ---
 
-## 🧩 Architectural Drivers
+## Architectural Drivers
 
 | Category            | Driver         | Description                                                         |
 | ------------------- | -------------- | ------------------------------------------------------------------- |
@@ -17,7 +17,7 @@ It follows a **three-tier architecture** with clear separation of concerns betwe
 
 ---
 
-## 🧱 System Layers
+## System Layers
 
 | Layer                 | Technology                          | Purpose                                                                |
 | --------------------- | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -30,7 +30,7 @@ It follows a **three-tier architecture** with clear separation of concerns betwe
 
 ---
 
-## 🗺️ C4 Architecture Diagrams
+## C4 Architecture Diagrams
 
 ### Level 1: System Context
 
@@ -54,7 +54,7 @@ Depicts the interaction between system components during a raffle cycle, from us
 
 ---
 
-## ⚙️ Architectural Principles
+## Architectural Principles
 
 1. **Separation of Concerns** — Each layer (frontend, backend, DB) has clear responsibilities.
 2. **Simplicity and Cost-efficiency** — Deployments use free-tier platforms to balance scalability and affordability.
@@ -64,7 +64,7 @@ Depicts the interaction between system components during a raffle cycle, from us
 
 ---
 
-## 🚀 Future Evolution
+## Future Evolution
 
 | Goal                      | Evolution Path                                            |
 | ------------------------- | --------------------------------------------------------- |
@@ -76,12 +76,11 @@ Depicts the interaction between system components during a raffle cycle, from us
 
 ---
 
-## 📈 Scalability & Future Integration Hooks
+## Scalability & Future Integration Hooks
 
 - **Modular service boundaries** — Backend structured to easily integrate:
-
-  - `LPR Ingestion API` for real-time license plate recognition.
-  - `Notification Service` for resident/admin alerts.
+    - `LPR Ingestion API` for real-time license plate recognition.
+    - `Notification Service` for resident/admin alerts.
 
 - **Database extendability** — Schema designed for easy inclusion of new entities (`Vehicles`, `AccessEvents`, `Buildings`).
 
@@ -93,7 +92,7 @@ Depicts the interaction between system components during a raffle cycle, from us
 
 ---
 
-## 🧭 Delegation & Team Scalability Plan
+## Delegation & Team Scalability Plan
 
 | Area                          | Ownership            | Future Responsibility                            |
 | ----------------------------- | -------------------- | ------------------------------------------------ |

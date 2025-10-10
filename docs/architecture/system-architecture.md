@@ -115,8 +115,7 @@ Shows the main event flow for the raffle process.
 
 ## Summary
 
-This architecture balances **simplicity, scalability, and cost-efficiency**.  
-It demonstrates senior-level architectural thinking by combining:
+This architecture balances **simplicity, scalability, and cost-efficiency**.
 
 - Lightweight but modular design.
 - Clear scalability path (multi-building, real-time updates).

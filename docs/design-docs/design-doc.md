@@ -27,7 +27,7 @@ The system is part of a broader **smart community ecosystem**, designed to integ
 
 ## 3. Goals and Non-Goals
 
-### ✅ Goals
+### Goals
 
 - **Fairness & Transparency** — Automate parking spot assignments to avoid human bias.
 - **Scalability** — Support multiple buildings and future AI-powered modules.
@@ -36,11 +36,10 @@ The system is part of a broader **smart community ecosystem**, designed to integ
 - **Cost-Efficiency** — Use free-tier cloud services for MVP deployment.
 - **Extendability** — Enable plug-in architecture for future LPR (License Plate Recognition) modules.
 
-### 🚫 Non-Goals
+### Non-Goals
 
 - Building a mobile app (web responsive only for MVP).
 - Implementing full AI pipelines (only placeholders and endpoints are prepared).
-- Managing payments or non-parking resident services.
 
 ---
 
@@ -54,11 +53,11 @@ The PMS follows a **three-tier architecture** with strong separation of concerns
   Encapsulates the raffle engine, resident management, and audit trails.
 - **Database:** Supabase (PostgreSQL) with strict relational modeling for consistency.
 - **Cache:**
-  - SSR-level caching via custom `NetworkFirstCacheService`.
-  - Future upgrade path to Redis (Upstash) for distributed, shared cache.
+    - SSR-level caching via custom `NetworkFirstCacheService`.
+    - Future upgrade path to Redis (Upstash) for distributed, shared cache.
 - **Hosting:**
-  - Frontend: **Vercel** (automatic PR previews).
-  - Backend: **Render** (auto-deploy from GitHub).
+    - Frontend: **Vercel** (automatic PR previews).
+    - Backend: **Render** (auto-deploy from GitHub).
 
 ### Container Diagram
 

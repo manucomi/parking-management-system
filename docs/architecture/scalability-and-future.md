@@ -6,41 +6,41 @@ The system’s architecture is intentionally modular — making it easy to exten
 
 ---
 
-## 🧩 Scalability Strategy
+## Scalability Strategy
 
 ### 1. Vertical Scalability (Performance)
 
 - **Backend Optimizations:**
-  - Use database indexes on frequently queried fields (`resident_id`, `building_id`, `allocated_at`).
-  - Optimize raffle logic by pre-loading eligible residents in memory and using transactions for atomic fairness updates.
+    - Use database indexes on frequently queried fields (`resident_id`, `building_id`, `allocated_at`).
+    - Optimize raffle logic by pre-loading eligible residents in memory and using transactions for atomic fairness updates.
 - **SSR Caching (MVP):**
-  - The Next.js custom `NetworkFirstCacheService` reduces backend load during high-traffic periods.
-  - Future replacement with Redis (Upstash) for distributed caching will support higher concurrency.
+    - The Next.js custom `NetworkFirstCacheService` reduces backend load during high-traffic periods.
+    - Future replacement with Redis (Upstash) for distributed caching will support higher concurrency.
 - **Asynchronous Raffle Execution:**
-  - Heavy operations (raffle rotations, fairness recalculations) can run in background jobs to prevent blocking API calls.
+    - Heavy operations (raffle rotations, fairness recalculations) can run in background jobs to prevent blocking API calls.
 
 ### 2. Horizontal Scalability (Users & Buildings)
 
 - **Multi-building Architecture:**
-  - Introduce a `building_id` field in all core entities (Resident, ParkingSpot, Allocation).
-  - Enable the system to scale across multiple buildings or residential complexes.
+    - Introduce a `building_id` field in all core entities (Resident, ParkingSpot, Allocation).
+    - Enable the system to scale across multiple buildings or residential complexes.
 - **Multi-tenancy Readiness:**
-  - Database schemas can evolve to support separate tenants (e.g., via schemas or `tenant_id` fields).
-  - Supabase supports RLS (Row-Level Security) policies for tenant isolation.
+    - Database schemas can evolve to support separate tenants (e.g., via schemas or `tenant_id` fields).
+    - Supabase supports RLS (Row-Level Security) policies for tenant isolation.
 
 ### 3. Infrastructure Scalability
 
 - **Deployment Evolution:**
-  - Current MVP uses **Vercel (frontend)** and **Render (backend)** for simplicity and CI/CD automation.
-  - Future versions can migrate to AWS ECS or Google Cloud Run with minimal configuration changes.
-  - Infrastructure-as-Code (IaC) tools like Terraform or Pulumi could define infrastructure declaratively.
+    - Current MVP uses **Vercel (frontend)** and **Render (backend)** for simplicity and CI/CD automation.
+    - Future versions can migrate to AWS ECS or Google Cloud Run with minimal configuration changes.
+    - Infrastructure-as-Code (IaC) tools like Terraform or Pulumi could define infrastructure declaratively.
 - **Caching & Event Queues:**
-  - Redis (Upstash) will replace local SSR cache for shared state.
-  - For real-time event distribution, consider adding **Pub/Sub** or **RabbitMQ** for event-driven updates.
+    - Redis (Upstash) will replace local SSR cache for shared state.
+    - For real-time event distribution, consider adding **Pub/Sub** or **RabbitMQ** for event-driven updates.
 
 ---
 
-## 🧠 Future Features Roadmap
+## Future Features Roadmap
 
 | Feature                             | Description                                                   | Architectural Impact                                                        | Delegation                      |
 | ----------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- |
@@ -53,7 +53,7 @@ The system’s architecture is intentionally modular — making it easy to exten
 
 ---
 
-## ⚙️ Technical Evolution Plan
+## Technical Evolution Plan
 
 ### Phase 1 — MVP (Current)
 
@@ -72,12 +72,12 @@ The system’s architecture is intentionally modular — making it easy to exten
 ### Phase 3 — Smart Automation
 
 - **Integrate License Plate Recognition (LPR):**
-  - Ingest real-time camera events via webhook.
-  - Match recognized plates against registered residents.
+    - Ingest real-time camera events via webhook.
+    - Match recognized plates against registered residents.
 - **Notifications:**
-  - Add push/email alerts for raffle participation and spot assignments.
+    - Add push/email alerts for raffle participation and spot assignments.
 - **Multi-Building Expansion:**
-  - Adapt allocation algorithm to support multiple complexes.
+    - Adapt allocation algorithm to support multiple complexes.
 
 ### Phase 4 — Enterprise-Ready Architecture
 
@@ -87,7 +87,7 @@ The system’s architecture is intentionally modular — making it easy to exten
 
 ---
 
-## 🔒 Security and Compliance Considerations
+## Security and Compliance Considerations
 
 | Area                               | Strategy                                                                        |
 | ---------------------------------- | ------------------------------------------------------------------------------- |
@@ -99,7 +99,7 @@ The system’s architecture is intentionally modular — making it easy to exten
 
 ---
 
-## 🤝 Delegation & Collaboration Plan
+## Delegation & Collaboration Plan
 
 **Core principles:**  
 This project assumes a growing multidisciplinary team. As new features evolve, clear boundaries between teams are established for ownership and scalability.
@@ -114,7 +114,7 @@ This project assumes a growing multidisciplinary team. As new features evolve, c
 
 ---
 
-## 📈 Summary
+## Summary
 
 The **Parking Management System** starts as a lightweight monolithic solution but evolves into a scalable, distributed, and event-driven platform.  
 By emphasizing caching, modularity, and separation of concerns, the system remains efficient today — and ready for future complexity tomorrow.

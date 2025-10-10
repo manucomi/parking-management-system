@@ -6,7 +6,7 @@ The mockups were designed in Figma to represent the main user flows for both **R
 
 ---
 
-## 🎨 Design Highlights
+## Design Highlights
 
 - **Clean executive dashboard style**.
 - **Consistent navigation patterns** for both roles (Resident and Admin).
@@ -15,7 +15,7 @@ The mockups were designed in Figma to represent the main user flows for both **R
 
 ---
 
-## 🧩 Screens Overview
+## Screens Overview
 
 | Role     | Screen                   | Description                                                                    |
 | -------- | ------------------------ | ------------------------------------------------------------------------------ |
@@ -29,7 +29,7 @@ The mockups were designed in Figma to represent the main user flows for both **R
 
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
 ### 1. Admin Dashboard (cover)
 
@@ -44,7 +44,7 @@ For the full interactive prototype, visit:
 
 ---
 
-## 🧠 Design-to-Architecture Mapping
+## Design-to-Architecture Mapping
 
 | UI Component    | React/Next.js Component | Data Source           | Notes                                |
 | --------------- | ----------------------- | --------------------- | ------------------------------------ |
@@ -56,7 +56,7 @@ For the full interactive prototype, visit:
 
 ---
 
-## 🔗 Related Files
+## Related Files
 
 - `/docs/architecture/container-diagram.jpeg`
 - `/docs/assets/cover.png`

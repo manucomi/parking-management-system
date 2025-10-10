@@ -96,9 +96,9 @@ docs(ui): update figma reference
 
 - Push your branch and open a PR to \`main\`.
 - Include:
-  - **Description** of the change
-  - **Linked ticket / ADR**
-  - **Screenshots** (for UI changes)
+    - **Description** of the change
+    - **Linked ticket / ADR**
+    - **Screenshots** (for UI changes)
 - Assign reviewer (Tech Lead or peer).
 
 ---
