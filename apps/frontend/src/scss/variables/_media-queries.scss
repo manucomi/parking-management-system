@@ -1,0 +1,7 @@
+$medium: 768px;
+$large: 1025px;
+$x-large: 1351px;
+
+$medium-up: "only screen and (min-width: #{$medium}), print";
+$large-up: "only screen and (min-width:#{$large})";
+$x-large-up: "only screen and (min-width:#{$x-large})";
