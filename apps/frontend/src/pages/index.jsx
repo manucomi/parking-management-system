@@ -1,5 +1,7 @@
+import TestComponent from '@/components/TestComponent/TestComponent';
+
 function Home() {
-    return <div>Hola</div>;
+    return <TestComponent />;
 }
 
 export default Home;
