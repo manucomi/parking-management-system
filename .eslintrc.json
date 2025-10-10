@@ -1,0 +1,59 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "airbnb",
+    "next",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["jest-dom", "testing-library", "jsx-a11y", "prettier", "react"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx", ".json"]
+      }
+    }
+  },
+  "ignorePatterns": [".*.js", "**/.*.json"],
+  "rules": {
+    "react/prop-types": [2],
+    "react/require-default-props": [
+      2,
+      {
+        "functions": "defaultArguments"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.@(js|jsx)",
+        "**/*.stories.jsx",
+        "**/*.stories.js",
+        "vitest.config.js"
+      ],
+      "rules": {
+        "import/no-extraneous-dependencies": 0,
+        "import/no-anonymous-default-export": 0,
+        "react/jsx-props-no-spreading": 0
+      }
+    }
+  ]
+}

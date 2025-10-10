@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "stylelint-config-sass-guidelines",
+    "stylelint-prettier/recommended"
+  ],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "order/properties-alphabetical-order": true,
+    "@stylistic/string-quotes": "double",
+    "@stylistic/indentation": 4,
+    "scss/load-no-partial-leading-underscore": null,
+    "scss/dollar-variable-colon-space-after": null
+  }
+}
