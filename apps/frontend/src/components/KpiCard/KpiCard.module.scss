@@ -1,0 +1,44 @@
+.card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+}
+
+.label {
+    color: #6c757d;
+    font-size: 16px;
+    order: 2;
+}
+
+.value {
+    color: #1a3d5c;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    order: 1;
+}
+
+.trend {
+    align-items: center;
+    display: flex;
+    font-size: 14px;
+    font-weight: 500;
+    gap: 4px;
+    order: 3;
+}
+
+.up {
+    color: #40c057;
+}
+
+.down {
+    color: #fa5252;
+}
+
+.flat {
+    color: #6c757d;
+}

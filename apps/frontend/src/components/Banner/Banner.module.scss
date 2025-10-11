@@ -1,0 +1,22 @@
+.banner {
+    background: linear-gradient(135deg, #12314a, #1a3d5c);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: #fff;
+    padding: 20px 16px;
+}
+
+.kicker {
+    font-weight: 700;
+    margin-bottom: 6px;
+    opacity: 0.9;
+}
+
+.title {
+    margin: 0 0 6px;
+}
+
+.subtitle {
+    margin: 0;
+    opacity: 0.9;
+}
