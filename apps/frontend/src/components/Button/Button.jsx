@@ -1,28 +1,27 @@
-import cx from 'classnames';
-import styles from './Button.module.css';
+import styles from './Button.module.scss';
 
-function Button({
+export default function Button({
     children,
     variant = 'primary',
     size = 'md',
-    block = false,
-    disabled,
-    ...props
+    className = '',
+    onClick,
+    disabled = false,
+    type = 'button',
+    icon,
 }) {
+    const variantClass = styles[variant] || styles.primary;
+    const sizeClass = size === 'md' ? '' : styles[size];
+
     return (
         <button
-            className={cx(
-                styles.btn,
-                styles[variant],
-                styles[size],
-                block && styles.block,
-            )}
+            type={type}
+            className={`${styles.btn} ${variantClass} ${sizeClass} ${className}`}
+            onClick={onClick}
             disabled={disabled}
-            {...props}
         >
+            {icon && <span className={styles.icon}>{icon}</span>}
             {children}
         </button>
     );
 }
-
-export default Button;
