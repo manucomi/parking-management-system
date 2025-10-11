@@ -17,7 +17,7 @@
         "lint:js:fix": "eslint --fix --ext .js,.jsx .",
         "prepare": "husky",
         "release:notes": "release-it --ci",
-        "storybook": "npm run -w mfe-articles-app sb",
+        "storybook": "npm run -w frontend storybook",
         "test": "dotenv turbo run test --concurrency=50%"
     },
     "devDependencies": {
