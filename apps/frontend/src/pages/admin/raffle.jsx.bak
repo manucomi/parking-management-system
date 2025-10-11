@@ -1,0 +1,413 @@
+import AdminSidebar from '@/components/AdminSidebar/AdminSidebar';
+import Table from '@/components/Table/Table';
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
+import styles from './raffle.module.scss';
+import {
+    nextRaffle,
+    registeredResidents,
+    previousRaffles,
+} from '@/data/adminDemo';
+import { useState } from 'react';
+
+export default function RafflePage() {
+    const [openRun, setOpenRun] = useState(false);
+    const [openResults, setOpenResults] = useState(false);
+
+    return (
+        <div className={styles.shell}>
+            <AdminSidebar current="/admin/raffle" />
+            <main className={styles.main}>
+                <header className={styles.header}>
+                    <div>
+                        <h1>Raffle Management</h1>
+                        <p className={styles.muted}>
+                            Control and monitor parking spot raffles
+                        </p>
+                    </div>
+                    <button
+                        className={styles.primary}
+                        onClick={() => setOpenRun(true)}
+                    >
+                        Run Raffle
+                    </button>
+                </header>
+
+                <section className={styles.summary}>
+                    <div className={styles.summaryCard}>
+                        <div className={styles.kicker}>Next Raffle</div>
+                        <div className={styles.big}>{nextRaffle.date}</div>
+                        <div className={styles.small}>
+                            {nextRaffle.registeredCount} residents have
+                            registered for this raffle
+                        </div>
+                        <div className={styles.small}>
+                            {nextRaffle.daysRemaining} days remaining
+                        </div>
+                    </div>
+                    <div className={styles.note}>
+                        <h3>Important Note</h3>
+                        <p>
+                            Running the raffle will assign spots to residents
+                            and notify them automatically. This action cannot be
+                            undone.
+                        </p>
+                        <div className={styles.actions}>
+                            <button className={styles.ghost}>
+                                Send Reminder to Unregistered Residents
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section className={styles.grid2}>
+                    <div className={styles.card}>
+                        <div className={styles.cardHead}>
+                            <h3>Registered Residents</h3>
+                            <span className={styles.count}>{registeredResidents.length} total</span>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Name', key: 'name' },
+                                { header: 'Apartment', key: 'apartment' },
+                                { header: 'Current Spot', key: 'currentSpot' },
+                                { header: 'Registered Date', key: 'registeredDate' },
+                            ]}
+                            data={registeredResidents}
+                            renderRow={(row, i) => (
+                                <tr key={i}>
+                                    <td>
+                                        <div className={styles.resident}>
+                                            <span className={styles.name}>{row.name}</span>
+                                            <span className={styles.email}>{row.email}</span>
+                                        </div>
+                                    </td>
+                                    <td>{row.apartment}</td>
+                                    <td>
+                                        {row.currentSpot || <span className={styles.none}>No spot</span>}
+                                    </td>
+                                    <td>{new Date(row.registeredDate).toLocaleDateString()}</td>
+                                </tr>
+                            )}
+                        />
+                    </div>
+
+                    <div className={styles.card}>
+                        <div className={styles.cardHead}>
+                            <h3>Previous Raffles</h3>
+                            <span className={styles.count}>{previousRaffles.length} total</span>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Date', key: 'date' },
+                                { header: 'Participants', key: 'participants' },
+                                { header: 'Assigned', key: 'assigned' },
+                                { header: 'Status', key: 'status' },
+                                { header: '', key: 'actions' },
+                            ]}
+                            data={previousRaffles}
+                            renderRow={(row, i) => (
+                                <tr key={i}>
+                                    <td>{new Date(row.date).toLocaleDateString()}</td>
+                                    <td>{row.participants}</td>
+                                    <td>
+                                        <span className={styles.success}>{row.assigned}</span>
+                                        /{row.participants}
+                                    </td>
+                                    <td>
+                                        <span className={`${styles.status} ${styles[row.status.toLowerCase()]}`}>
+                                            {row.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            className={styles.viewResults}
+                                            onClick={() => setOpenResults(true)}
+                                        >
+                                            View Results
+                                        </button>
+                                    </td>
+                                </tr>
+                            )}
+                        />
+                    </div>
+                </section>
+
+                {openRun && (
+                    <ConfirmModal
+                        title="Run Raffle"
+                        message="Are you sure you want to run the raffle? This will assign spots to residents and cannot be undone."
+                        confirmLabel="Run Raffle"
+                        onConfirm={() => {
+                            // TODO: Implement raffle
+                            setOpenRun(false);
+                        }}
+                        onCancel={() => setOpenRun(false)}
+                    />
+                )}
+
+                {openResults && (
+                    <ConfirmModal
+                        title="Raffle Results"
+                        message={
+                            <div className={styles.resultsList}>
+                                <div className={styles.resultsMeta}>
+                                    <div>
+                                        <div className={styles.big}>42</div>
+                                        <div className={styles.small}>Participants</div>
+                                    </div>
+                                    <div>
+                                        <div className={styles.big}>35</div>
+                                        <div className={styles.small}>Spots Assigned</div>
+                                    </div>
+                                    <div>
+                                        <div className={styles.big}>83%</div>
+                                        <div className={styles.small}>Success Rate</div>
+                                    </div>
+                                </div>
+                                {previousRaffles[0].winners.map((w, i) => (
+                                    <div key={i} className={styles.row}>
+                                        <div className={styles.name}>{w.name}</div>
+                                        <div className={styles.spot}>{w.spot}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        }
+                        confirmLabel="Close"
+                        onConfirm={() => setOpenResults(false)}
+                        onCancel={() => setOpenResults(false)}
+                    />
+                )}
+            </main>
+        </div>
+    );
+}
+                        <div className={styles.cardHead}>
+                            <h3>Previous Raffles</h3>
+                            <span className={styles.count}>{previousRaffles.length} total</span>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Date', key: 'date' },
+                                { header: 'Participants', key: 'participants' },
+                                { header: 'Assigned', key: 'assigned' },
+                                { header: 'Status', key: 'status' },
+                                { header: '', key: 'actions' },
+                            ]}
+                            data={previousRaffles}
+                            renderRow={(row, i) => (
+                                <tr key={i}>
+                                    <td>{new Date(row.date).toLocaleDateString()}</td>
+                                    <td>{row.participants}</td>
+                                    <td>
+                                        <span className={styles.success}>{row.assigned}</span>
+                                        /{row.participants}
+                                    </td>
+                                    <td>
+                                        <span className={`${styles.status} ${styles[row.status.toLowerCase()]}`}>
+                                            {row.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            className={styles.viewResults}
+                                            onClick={() => setOpenResults(true)}
+                                        >
+                                            View Results
+                                        </button>
+                                    </td>
+                                </tr>
+                            )}                <div className={styles.cardHead}>
+                            <h3>Registered Residents</h3>
+                            <span className={styles.count}>{registeredResidents.length} total</span>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Name', key: 'name' },
+                                { header: 'Apartment', key: 'apartment' },
+                                { header: 'Current Spot', key: 'currentSpot' },
+                                { header: 'Registered Date', key: 'registeredDate' },
+                            ]}
+                            data={registeredResidents}
+                            renderRow={(row, i) => (
+                                <tr key={i}>
+                                    <td>
+                                        <div className={styles.resident}>
+                                            <span className={styles.name}>{row.name}</span>
+                                            <span className={styles.email}>{row.email}</span>
+                                        </div>
+                                    </td>
+                                    <td>{row.apartment}</td>
+                                    <td>
+                                        {row.currentSpot || <span className={styles.none}>No spot</span>}
+                                    </td>
+                                    <td>{new Date(row.registeredDate).toLocaleDateString()}</td>
+                                </tr>
+                            )}
+                        /> Table from '@/components/Table/Table';
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
+import styles from './raffle.module.scss';
+import {
+    nextRaffle,
+    registeredResidents,
+    previousRaffles,
+} from '@/data/adminDemo';
+import { useMemo, useState } from 'react';
+
+export default function RafflePage() {
+    const [openRun, setOpenRun] = useState(false);
+    const [openResults, setOpenResults] = useState(false);
+
+    return (
+        <div className={styles.shell}>
+            <AdminSidebar current="/admin/raffle" />
+            <main className={styles.main}>
+                <header className={styles.header}>
+                    <div>
+                        <h1>Raffle Management</h1>
+                        <p className={styles.muted}>
+                            Control and monitor parking spot raffles
+                        </p>
+                    </div>
+                    <button
+                        className={styles.primary}
+                        onClick={() => setOpenRun(true)}
+                    >
+                        Run Raffle
+                    </button>
+                </header>
+
+                <section className={styles.summary}>
+                    <div className={styles.summaryCard}>
+                        <div className={styles.kicker}>Next Raffle</div>
+                        <div className={styles.big}>{nextRaffle.date}</div>
+                        <div className={styles.small}>
+                            {nextRaffle.registeredCount} residents have
+                            registered for this raffle
+                        </div>
+                        <div className={styles.small}>
+                            {nextRaffle.daysRemaining} days remaining
+                        </div>
+                    </div>
+                    <div className={styles.note}>
+                        <h3>Important Note</h3>
+                        <p>
+                            Running the raffle will assign spots to residents
+                            and notify them automatically. This action cannot be
+                            undone.
+                        </p>
+                        <div className={styles.actions}>
+                            <button className={styles.ghost}>
+                                Send Reminder to Unregistered Residents
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section className={styles.grid2}>
+                    <div className={styles.card}>
+                        <div className={styles.cardHead}>
+                            <h3>Registered Residents</h3>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Name', key: 'name' },
+                                { header: 'Email', key: 'email' },
+                            ]}
+                            rows={registeredResidents}
+                        />
+                    </div>
+
+                    <div className={styles.card}>
+                        <div className={styles.cardHead}>
+                            <h3>Previous Raffles</h3>
+                        </div>
+                        <Table
+                            columns={[
+                                { header: 'Date', key: 'date' },
+                                { header: 'Participants', key: 'participants' },
+                                { header: 'Spots Assigned', key: 'assigned' },
+                            ]}
+                            rows={previousRaffles}
+                            renderRow={(row, i) => (
+                                <tr key={i}>
+                                    <td>{row.date}</td>
+                                    <td>{row.participants}</td>
+                                    <td>{row.assigned}</td>
+                                </tr>
+                            )}
+                        />
+                        <div className={styles.cardFoot}>
+                            <button
+                                className={styles.link}
+                                onClick={() => setOpenResults(true)}
+                            >
+                                View Results
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <ConfirmModal
+                    open={openRun}
+                    title="Run Raffle"
+                    description={
+                        <>
+                            <p>
+                                You are about to execute the raffle scheduled
+                                for <strong>{nextRaffle.date}</strong>.
+                            </p>
+                            <p>
+                                This will generate new assignments for available
+                                spots. Proceed?
+                            </p>
+                        </>
+                    }
+                    onCancel={() => setOpenRun(false)}
+                    onConfirm={() => setOpenRun(false)}
+                />
+
+                <ConfirmModal
+                    open={openResults}
+                    title={`Raffle Results - ${previousRaffles[0].date}`}
+                    description={
+                        <>
+                            <div className={styles.resultsMeta}>
+                                <div>
+                                    <strong>Date</strong>
+                                    <div>{previousRaffles[0].date}</div>
+                                </div>
+                                <div>
+                                    <strong>Participants</strong>
+                                    <div>{previousRaffles[0].participants}</div>
+                                </div>
+                                <div>
+                                    <strong>Spots Assigned</strong>
+                                    <div>{previousRaffles[0].assigned}</div>
+                                </div>
+                            </div>
+                            <div className={styles.resultsList}>
+                                <div className={styles.row}>
+                                    <span>John Smith</span>
+                                    <span>12</span>
+                                    <span>Building A</span>
+                                </div>
+                                <div className={styles.row}>
+                                    <span>Sarah Johnson</span>
+                                    <span>8</span>
+                                    <span>Building B</span>
+                                </div>
+                                <div className={styles.row}>
+                                    <span>Michael Brown</span>
+                                    <span>24</span>
+                                    <span>Building A</span>
+                                </div>
+                            </div>
+                        </>
+                    }
+                    onCancel={() => setOpenResults(false)}
+                    onConfirm={() => setOpenResults(false)}
+                />
+            </main>
+        </div>
+    );
+}
