@@ -1,0 +1,10 @@
+.shell {
+    background: #f8f9fa;
+    min-height: 100vh;
+    position: relative;
+}
+
+.main {
+    margin-left: 308px; /* 260px (sidebar width) + 24px (left padding) + 24px (gap) */
+    padding: 24px 24px 24px 0;
+}

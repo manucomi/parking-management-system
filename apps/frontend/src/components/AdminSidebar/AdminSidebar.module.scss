@@ -1,0 +1,77 @@
+@use "@/scss/variables/colors" as *;
+@use "@/scss/variables/media-queries" as mq;
+
+.aside {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    height: calc(100vh - 48px);
+    left: 24px;
+    padding: 32px 16px;
+    position: fixed;
+    top: 24px;
+    width: 260px;
+}
+
+.brand {
+    color: #1a3d5c;
+    font-size: 24px;
+    font-weight: 600;
+    padding: 0 12px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nav-link {
+    align-items: center;
+    border-radius: 8px;
+    color: #6c757d;
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    gap: 16px;
+    padding: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+
+    svg {
+        height: 20px;
+        opacity: 0.8;
+        stroke: currentColor;
+        width: 20px;
+    }
+
+    &:hover {
+        background: #f8f9fa;
+        color: #1a3d5c;
+    }
+
+    &:hover svg {
+        opacity: 1;
+    }
+
+    &.active {
+        background: #1a3d5c;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    &.active svg {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 960px) {
+    .aside {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+}
