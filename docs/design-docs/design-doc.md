@@ -21,7 +21,7 @@ The PMS aims to introduce transparency and automation in allocation cycles while
 
 The system is part of a broader **smart community ecosystem**, designed to integrate with sensors and AI-based modules over time.
 
-![System Context Diagram](../architecture/system-context-diagram.jpeg)
+![System Context Diagram](../architecture/system-context-diagram.png)
 
 ---
 
@@ -61,7 +61,7 @@ The PMS follows a **three-tier architecture** with strong separation of concerns
 
 ### Container Diagram
 
-![Container Diagram](../architecture/container-diagram.jpeg)
+![Container Diagram](../architecture/container-diagram.png)
 
 ---
 

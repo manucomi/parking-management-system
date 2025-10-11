@@ -8,8 +8,8 @@ This document acts as an entry point for all design, architecture, and implement
 
 ### 🧭 System Architecture
 
-- [System Context Diagram](./docs/architecture/system-context-diagram.jpeg)
-- [Container Diagram](./docs/architecture/container-diagram.jpeg)
+- [System Context Diagram](./docs/architecture/system-context-diagram.png)
+- [Container Diagram](./docs/architecture/container-diagram.png)
 - [Component Diagram](./docs/architecture/component-diagram.jpeg)
 - [Domain Model](./docs/architecture/domain-model.md)
 
@@ -22,9 +22,9 @@ This document acts as an entry point for all design, architecture, and implement
 
 - [Main Design Document](./docs/design-docs/design-doc.md)
 - [Architecture Decision Records (ADRs)](./docs/design-docs/adr/)
-  - [0001 - Database Choice](./docs/design-docs/adr/0001-database-choice.md)
-  - [0002 - Frontend Framework](./docs/design-docs/adr/0002-frontend-framework.md)
-  - [0003 - Backend Architecture](./docs/design-docs/adr/0003-backend-architecture.md)
+    - [0001 - Database Choice](./docs/design-docs/adr/0001-database-choice.md)
+    - [0002 - Frontend Framework](./docs/design-docs/adr/0002-frontend-framework.md)
+    - [0003 - Backend Architecture](./docs/design-docs/adr/0003-backend-architecture.md)
 
 ### 📜 Requirements & Specifications
 

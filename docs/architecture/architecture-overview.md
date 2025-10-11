@@ -34,12 +34,12 @@ It follows a **three-tier architecture** with clear separation of concerns betwe
 
 ### Level 1: System Context
 
-![System Context Diagram](./system-context-diagram.jpeg)  
+![System Context Diagram](./system-context-diagram.png)  
 Shows how the system interacts with external actors (Residents, Admins) and cloud services (Supabase, Render, Vercel).
 
 ### Level 2: Container Diagram
 
-![Container Diagram](./container-diagram.jpeg)  
+![Container Diagram](./container-diagram.png)  
 Outlines the high-level containers (Frontend, API, Database, Cache) and their communication flows.
 
 ### Level 3: Component Diagram

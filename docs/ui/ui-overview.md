@@ -58,7 +58,7 @@ For the full interactive prototype, visit:
 
 ## Related Files
 
-- `/docs/architecture/container-diagram.jpeg`
+- `/docs/architecture/container-diagram.png`
 - `/docs/assets/cover.png`
 - `/docs/assets/figma-ui.png`
 - `/docs/design-doc.md`

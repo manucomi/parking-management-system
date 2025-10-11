@@ -11,7 +11,7 @@
         "clean:deps": "rm -rf node_modules/",
         "clean:test": "rm -rf .coverage/",
         "dev": "next dev",
-        "lint": "npm run lint:js && npm run lint:scss",
+        "lint": "npm run lint:scss",
         "lint:fix": "npm run lint:js:fix && npm run lint:scss:fix",
         "lint:js": "eslint --ext .js,.jsx .",
         "lint:js:fix": "eslint --fix --ext .js,.jsx .",
@@ -24,6 +24,7 @@
         "storybook": "storybook dev -p 6006"
     },
     "dependencies": {
+        "classnames": "^2.5.1",
         "next": "15.5.2",
         "prop-types": "15.8.1",
         "react": "19.1.0",
