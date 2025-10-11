@@ -1,6 +1,9 @@
-@import "variables/colors";
-@import "variables/spacing";
-@import "variables/typography";
+// ===========================================
+// Utility Classes
+// Helper classes for common patterns
+// ===========================================
+
+@use "variables" as *;
 
 // Flexbox utilities
 .flex {
@@ -31,6 +34,7 @@
 .m-0 {
     margin: 0;
 }
+
 .p-0 {
     padding: 0;
 }
@@ -75,12 +79,15 @@
 .text-sm {
     font-size: $font-size-sm;
 }
+
 .text-md {
     font-size: $font-size-md;
 }
+
 .text-lg {
     font-size: $font-size-lg;
 }
+
 .text-xl {
     font-size: $font-size-xl;
 }
@@ -88,12 +95,15 @@
 .font-normal {
     font-weight: $font-weight-normal;
 }
+
 .font-medium {
     font-weight: $font-weight-medium;
 }
+
 .font-semibold {
     font-weight: $font-weight-semibold;
 }
+
 .font-bold {
     font-weight: $font-weight-bold;
 }
@@ -101,9 +111,11 @@
 .text-left {
     text-align: left;
 }
+
 .text-center {
     text-align: center;
 }
+
 .text-right {
     text-align: right;
 }
@@ -112,20 +124,24 @@
 .text-primary {
     color: $color-teal;
 }
+
 .text-error {
     color: $color-hbr-red;
 }
+
 .text-gray {
-    color: $color-tertiary-pewter;
+    color: $color-pewter-tertiary;
 }
 
 // Background colors
 .bg-white {
     background-color: $color-white;
 }
+
 .bg-cloud {
-    background-color: $color-background-cloud;
+    background-color: $color-background;
 }
+
 .bg-primary {
     background-color: $color-teal;
 }
@@ -134,12 +150,15 @@
 .rounded-sm {
     border-radius: $border-radius-sm;
 }
+
 .rounded-md {
     border-radius: $border-radius-md;
 }
+
 .rounded-lg {
     border-radius: $border-radius-lg;
 }
+
 .rounded-full {
     border-radius: $border-radius-full;
 }
@@ -148,27 +167,31 @@
 .shadow-sm {
     box-shadow: $shadow-sm;
 }
+
 .shadow-md {
     box-shadow: $shadow-md;
 }
+
 .shadow-lg {
     box-shadow: $shadow-lg;
 }
 
 // Layout utilities
 .container {
-    width: 100%;
-    max-width: $container-max-width;
     margin: 0 auto;
+    max-width: $container-max-width;
     padding: 0 $container-padding;
+    width: 100%;
 }
 
 .hidden {
     display: none;
 }
+
 .block {
     display: block;
 }
+
 .inline-block {
     display: inline-block;
 }
@@ -183,9 +206,11 @@
     .grid-cols-2 {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .grid-cols-3 {
         grid-template-columns: repeat(3, 1fr);
     }
+
     .grid-cols-4 {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -195,6 +220,7 @@
 .transition {
     transition: $transition-base;
 }
+
 .transition-smooth {
     transition: $transition-smooth;
 }

@@ -1,6 +1,10 @@
-@import "variables/colors";
-@import "variables/typography";
-@import "variables/spacing";
+// ===========================================
+// Baseline Styles
+// Global resets and base styles
+// ===========================================
+
+@use "sass:color";
+@use "variables" as *;
 
 // Reset
 html {
@@ -19,13 +23,13 @@ html {
 }
 
 body {
-    margin: 0;
-    padding: 0;
+    background-color: $color-background;
+    color: $color-charcoal;
     font-family: $font-family-base;
     font-size: 1rem;
     line-height: 1.5;
-    color: $color-charcoal;
-    background-color: $color-background-cloud;
+    margin: 0;
+    padding: 0;
 }
 
 // Typography
@@ -35,28 +39,33 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 0 0 $spacing-md;
+    color: $color-charcoal;
     font-family: $font-family-heading;
     font-weight: 600;
     line-height: 1.2;
-    color: $color-charcoal;
+    margin: 0 0 $spacing-md;
 }
 
 h1 {
     font-size: 2.5rem;
 }
+
 h2 {
     font-size: 2rem;
 }
+
 h3 {
     font-size: 1.75rem;
 }
+
 h4 {
     font-size: 1.5rem;
 }
+
 h5 {
     font-size: 1.25rem;
 }
+
 h6 {
     font-size: 1rem;
 }
@@ -72,7 +81,7 @@ a {
     transition: color 0.2s ease;
 
     &:hover {
-        color: darken($color-teal, 10%);
+        color: color.adjust($color-teal, $lightness: -10%);
     }
 }
 
@@ -85,11 +94,11 @@ ol {
 // Buttons reset
 button {
     background: none;
-    border: none;
-    padding: 0;
+    border: 0;
+    color: inherit;
     cursor: pointer;
     font-family: inherit;
-    color: inherit;
+    padding: 0;
 }
 
 // Form elements
@@ -99,4 +108,46 @@ textarea {
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+    --primary: #1a3d5c;
+    --accent: #3fb950;
+    --background: #f5f6f7;
+    --text: #333;
+    --light-gray: #e5e7eb;
+    --medium-gray: #9ca3af;
+    --white: #fff;
+    --error: #ef4444;
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
 }

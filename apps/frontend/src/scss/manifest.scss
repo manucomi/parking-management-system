@@ -1,7 +1,13 @@
-@import "baseline";
-@import "utilities";
+// ===========================================
+// SCSS Manifest - Central Import File
+// Parking Management System
+// ===========================================
 
-// Variables
-@import "variables/colors";
-@import "variables/typography";
-@import "variables/spacing";
+// 1. Variables (import first - used by everything else)
+@use "variables" as *;
+
+// 2. Base styles (resets, global styles)
+@use "baseline";
+
+// 3. Utilities (helper classes)
+@use "utilities";
