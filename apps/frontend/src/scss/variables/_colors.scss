@@ -1,28 +1,52 @@
+// ===========================================
+// DESIGN TOKENS - Parking Management System
+// Source: Figma design system
+// ===========================================
+
+// Primary Brand Colors
+$color-primary: #1a3d5c; // Navy blue - main brand color
+$color-accent: #3fb950; // Green - success/accent color
+$color-teal: #075e64; // Teal - interactive elements
+
+// Neutral Scale
+$color-white: #fff;
+$color-background: #f5f6f8; // Cloud background
+$color-surface: #fff; // Card/panel backgrounds
+
+// Gray Scale
 $color-charcoal: #282828;
 $color-charcoal-dark: #111;
 $color-pewter: #787878;
+$color-pewter-secondary: #717171;
+$color-pewter-tertiary: #666;
 $color-silver: #888;
-$color-hbr-red: #c82502;
-$color-marine: #0787b1;
-$color-white: #fff;
-$legacy-color-gray-light: #d5d7d8;
-$legacy-color-gray: #c5c8c9;
-$legacy-color-red-light: #fe5502;
-$legacy-color-maroon: #a01e02;
-$legacy-color-gray-lighter: #c8c8c8;
-$legacy-color-gray-medium: #b3b3b3;
-$legacy-color-gray-dark: #3c3c3c;
-$legacy-color-border-gray: #cdcdcd;
 
-/* Colors copied from figma */
-$color-teal: #075e64;
-$color-tertiary-pewter: #666;
-$color-background-cloud: #f5f6f8;
-$color-lightest-link: #767676;
-$color-border-light-gray: #e2e2e2;
-$color-ui-border: #8f8f8f;
-$color-border-light-grey: #e2e2e2;
+// Border Colors
+$color-border: #e2e2e2; // Light border
+$color-border-ui: #8f8f8f; // UI elements
+$color-border-medium: #cdcdcd; // Medium border
+
+// Text Colors
+$color-text-primary: #282828;
+$color-text-secondary: #767676;
+$color-text-icon: #505050;
+
+// Semantic/State Colors
+$color-error: #ef4444;
+$color-success: #10b981;
+$color-warning: #f59e0b;
+$color-hbr-red: #c82502; // Legacy accent
+$color-red-light: #fe5502;
+$color-maroon: #a01e02;
+$color-marine: #0787b1;
+
+// Utilities
 $color-box-shadow: rgba(40, 40, 40, 0.25);
 $color-checkbox-selected: #cfcece;
-$color-secondary-icon: #505050;
-$color-secondary-pewter: #717171;
+
+// Gray Variants
+$color-gray: #c5c8c9;
+$color-gray-light: #d5d7d8;
+$color-gray-lighter: #c8c8c8;
+$color-gray-medium: #b3b3b3;
+$color-gray-dark: #3c3c3c;

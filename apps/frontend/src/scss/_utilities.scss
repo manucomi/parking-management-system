@@ -1,0 +1,213 @@
+@import "variables/colors";
+@import "variables/spacing";
+@import "variables/typography";
+
+// Flexbox utilities
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+// Spacing utilities
+.m-0 {
+    margin: 0;
+}
+.p-0 {
+    padding: 0;
+}
+
+@each $size in (xs, sm, md, lg, xl) {
+    $value: var(--spacing-#{$size});
+
+    .m-#{$size} {
+        margin: $value;
+    }
+    .mt-#{$size} {
+        margin-top: $value;
+    }
+    .mr-#{$size} {
+        margin-right: $value;
+    }
+    .mb-#{$size} {
+        margin-bottom: $value;
+    }
+    .ml-#{$size} {
+        margin-left: $value;
+    }
+
+    .p-#{$size} {
+        padding: $value;
+    }
+    .pt-#{$size} {
+        padding-top: $value;
+    }
+    .pr-#{$size} {
+        padding-right: $value;
+    }
+    .pb-#{$size} {
+        padding-bottom: $value;
+    }
+    .pl-#{$size} {
+        padding-left: $value;
+    }
+}
+
+// Typography utilities
+.text-sm {
+    font-size: $font-size-sm;
+}
+.text-md {
+    font-size: $font-size-md;
+}
+.text-lg {
+    font-size: $font-size-lg;
+}
+.text-xl {
+    font-size: $font-size-xl;
+}
+
+.font-normal {
+    font-weight: $font-weight-normal;
+}
+.font-medium {
+    font-weight: $font-weight-medium;
+}
+.font-semibold {
+    font-weight: $font-weight-semibold;
+}
+.font-bold {
+    font-weight: $font-weight-bold;
+}
+
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+
+// Color utilities
+.text-primary {
+    color: $color-teal;
+}
+.text-error {
+    color: $color-hbr-red;
+}
+.text-gray {
+    color: $color-tertiary-pewter;
+}
+
+// Background colors
+.bg-white {
+    background-color: $color-white;
+}
+.bg-cloud {
+    background-color: $color-background-cloud;
+}
+.bg-primary {
+    background-color: $color-teal;
+}
+
+// Border utilities
+.rounded-sm {
+    border-radius: $border-radius-sm;
+}
+.rounded-md {
+    border-radius: $border-radius-md;
+}
+.rounded-lg {
+    border-radius: $border-radius-lg;
+}
+.rounded-full {
+    border-radius: $border-radius-full;
+}
+
+// Shadow utilities
+.shadow-sm {
+    box-shadow: $shadow-sm;
+}
+.shadow-md {
+    box-shadow: $shadow-md;
+}
+.shadow-lg {
+    box-shadow: $shadow-lg;
+}
+
+// Layout utilities
+.container {
+    width: 100%;
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 0 $container-padding;
+}
+
+.hidden {
+    display: none;
+}
+.block {
+    display: block;
+}
+.inline-block {
+    display: inline-block;
+}
+
+// Grid
+.grid {
+    display: grid;
+    gap: $grid-gutter;
+}
+
+@media (min-width: 640px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+// Transitions
+.transition {
+    transition: $transition-base;
+}
+.transition-smooth {
+    transition: $transition-smooth;
+}
+
+// States
+.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+// Truncate
+.truncate {
+    @each $property, $value in $text-truncate {
+        #{$property}: $value;
+    }
+}
