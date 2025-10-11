@@ -1,0 +1,18 @@
+.wrap {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn {
+    background: #fff;
+    border: 1px solid #cfd9e3;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

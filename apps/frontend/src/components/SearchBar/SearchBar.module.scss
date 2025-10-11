@@ -1,0 +1,22 @@
+.bar {
+    align-items: center;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+}
+
+.input {
+    border: 1px solid #d7dfea;
+    border-radius: 8px;
+    padding: 10px 12px;
+    width: 100%;
+}
+
+.input:focus {
+    border-color: #9bb3c9;
+    box-shadow: 0 0 0 2px #d6e4f2;
+    outline: none;
+}
