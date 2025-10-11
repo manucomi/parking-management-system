@@ -88,7 +88,7 @@ Explains how internal modules within the Frontend and Backend interact.
 
 ## Level 4: Sequence Diagram (Raffle Flow)
 
-![Sequence Diagram](./sequence-diagram-raffle.png)
+![Sequence Diagram](./sequence-diagram.png)
 
 **Purpose:**  
 Shows the main event flow for the raffle process.

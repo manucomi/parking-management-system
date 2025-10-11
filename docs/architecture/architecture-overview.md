@@ -49,7 +49,7 @@ Illustrates internal structures — how Next.js components, hooks, and API endpo
 
 ### Level 4: Sequence Diagram (Raffle Flow)
 
-![Raffle Sequence Diagram](./sequence-diagram-raffle.jpeg)  
+![Raffle Sequence Diagram](./sequence-diagram.png)  
 Depicts the interaction between system components during a raffle cycle, from user registration to allocation update.
 
 ---
