@@ -13,6 +13,7 @@ const customJestConfig = {
         'lib/',
         '.stories.jsx',
         'components/.*index.js',
+        'services/.*index.js',
         'components/Layout/AdminLayout',
         'components/Layout/withAdminLayout',
     ],
