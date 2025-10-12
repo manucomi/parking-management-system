@@ -27,6 +27,6 @@ export async function assignSpot(spotId, assignmentData) {
     return post(`${BASE_URL}/${spotId}/assign`, assignmentData);
 }
 
-export async function releaseSpot(spotId) {
-    return post(`${BASE_URL}/${spotId}/release`, {});
+export async function releaseSpot(spotId, releaseData = {}) {
+    return post(`${BASE_URL}/${spotId}/release`, releaseData);
 }
