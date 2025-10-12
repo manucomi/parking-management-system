@@ -6,6 +6,7 @@ on:
         paths:
             - 'apps/frontend/**'
             - '.github/workflows/frontend-ci.yml'
+            - '.changeset/**'
             - 'package.json'
             - 'turbo.json'
     push:
@@ -13,6 +14,7 @@ on:
         paths:
             - 'apps/frontend/**'
             - '.github/workflows/frontend-ci.yml'
+            - '.changeset/**'
             - 'package.json'
             - 'turbo.json'
 
