@@ -1,0 +1,59 @@
+name: Frontend CI/CD Pipeline
+
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - 'apps/frontend/**'
+    push:
+        branches: [main]
+        paths:
+            - 'apps/frontend/**'
+
+jobs:
+    frontend_ci:
+        name: Validate Frontend (Lint + Test + Build)
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: apps/frontend
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run Linter
+              run: npm run lint
+
+            - name: Run Tests
+              run: npm run test
+
+            - name: Build Next.js App
+              run: npm run build
+
+    deploy:
+        name: Deploy to Vercel (on merge)
+        needs: frontend_ci
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Trigger Vercel Deploy
+              env:
+                  VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+              run: |
+                  echo "Triggering Vercel Deploy..."
+                  curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
