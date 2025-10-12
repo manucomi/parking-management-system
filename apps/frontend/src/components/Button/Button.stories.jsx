@@ -19,7 +19,7 @@ Primary.args = {
 export const Secondary = Template.bind({});
 Secondary.args = {
     children: 'Secondary Button',
-    variant: 'secondary',
+    variant: 'accent',
 };
 
 export const Disabled = Template.bind({});

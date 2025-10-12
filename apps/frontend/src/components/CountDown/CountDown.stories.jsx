@@ -12,18 +12,8 @@ function Template(args) {
 
 const futureDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000); // 5 days from now
 
-export const Default = Template.bind({});
-Default.args = {
-    targetDate: futureDate.toISOString(),
-};
-
-export const CustomLabels = Template.bind({});
-CustomLabels.args = {
-    targetDate: futureDate.toISOString(),
-    labels: {
-        days: 'd',
-        hours: 'h',
-        minutes: 'm',
-        seconds: 's',
+export const Default = {
+    args: {
+        targetDate: futureDate.toISOString(),
     },
 };

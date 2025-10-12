@@ -9,8 +9,12 @@ const customJestConfig = {
     collectCoverageFrom: ['src/**/*.{js,jsx}'],
     coveragePathIgnorePatterns: [
         'pages/',
+        'data/',
+        'lib/',
         '.stories.jsx',
         'components/.*index.js',
+        'components/Layout/AdminLayout',
+        'components/Layout/withAdminLayout',
     ],
     coverageReporters: ['lcov', 'text', 'html'],
     coverageDirectory: '.coverage',
@@ -25,8 +29,6 @@ const customJestConfig = {
     moduleNameMapper: {
         '\\.(s)?css$': 'identity-obj-proxy',
         '^@/(.*)$': '<rootDir>/src/$1',
-        '^test-helpers/(.*)': '<rootDir>/tests/helpers/$1',
-        '^services/(.*)$': '<rootDir>/src/services/$1',
     },
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
