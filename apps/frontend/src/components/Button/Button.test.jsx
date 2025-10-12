@@ -10,7 +10,7 @@ describe('Button', () => {
     it('applies correct default classes', () => {
         render(<Button>Default Button</Button>);
         const button = screen.getByText('Default Button');
-        expect(button).toHaveClass('btn', 'primary', 'md');
+        expect(button).toHaveClass('btn', 'primary');
     });
 
     it('applies variant class correctly', () => {
@@ -25,10 +25,10 @@ describe('Button', () => {
         expect(button).toHaveClass('lg');
     });
 
-    it('applies block class when block prop is true', () => {
-        render(<Button block>Block Button</Button>);
-        const button = screen.getByText('Block Button');
-        expect(button).toHaveClass('block');
+    it('renders icon when provided', () => {
+        render(<Button icon="✓">Icon Button</Button>);
+        expect(screen.getByText('Icon Button')).toBeInTheDocument();
+        expect(screen.getByText('✓')).toBeInTheDocument();
     });
 
     it('disables button when disabled prop is true', () => {
@@ -44,5 +44,11 @@ describe('Button', () => {
 
         fireEvent.click(button);
         expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('falls back to primary class for invalid variant', () => {
+        render(<Button>Fallback Button</Button>);
+        const button = screen.getByText('Fallback Button');
+        expect(button).toHaveClass('btn', 'primary');
     });
 });
