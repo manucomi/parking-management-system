@@ -10,6 +10,7 @@ export const Default = {
     args: {
         title: 'Card Title',
         subtitle: 'Card Subtitle',
+        right: <button>Action</button>,
         children: 'This is the content of the card.',
     },
 };
