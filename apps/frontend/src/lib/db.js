@@ -117,3 +117,328 @@ export function addRaffle(r) {
 export function listRaffles() {
     return getState().raffles;
 }
+
+// ============================================================================
+// API Route Stub Functions (Backend Integration Layer)
+// These functions will be replaced with actual Supabase/Backend calls
+// ============================================================================
+
+/**
+ * Get all residents with pagination and filters
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getAllResidents(params = {}) {
+    const { page = 1, limit = 10, search, building, hasParking } = params;
+    const state = getState();
+    let filtered = [...state.residents];
+
+    // Apply filters
+    if (search) {
+        const searchLower = search.toLowerCase();
+        filtered = filtered.filter(
+            (r) =>
+                r.name?.toLowerCase().includes(searchLower) ||
+                r.email?.toLowerCase().includes(searchLower),
+        );
+    }
+    if (building) {
+        filtered = filtered.filter((r) => r.building === building);
+    }
+    if (hasParking !== undefined) {
+        const hasAllocation = (residentId) =>
+            state.allocations.some((a) => a.residentId === residentId);
+        filtered = filtered.filter((r) => hasAllocation(r.id) === hasParking);
+    }
+
+    // Pagination
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const residents = filtered.slice(start, start + limit);
+
+    return {
+        residents,
+        total,
+        page,
+        totalPages,
+    };
+}
+
+/**
+ * Get resident by ID
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getResidentById(id) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident) return null;
+
+    // Include parking allocation if exists
+    const allocation = state.allocations.find((a) => a.residentId === id);
+    const spot = allocation
+        ? state.spots.find((s) => s.id === allocation.spotId)
+        : null;
+
+    return {
+        ...resident,
+        parkingAllocation: allocation
+            ? {
+                  spotId: allocation.spotId,
+                  spot,
+                  validUntil: allocation.validUntil,
+              }
+            : null,
+    };
+}
+
+/**
+ * Update resident
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function updateResident(id, data, options = {}) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident) return null;
+
+    const updated = options.partial
+        ? { ...resident, ...data }
+        : { ...data, id };
+
+    upsertResident(updated);
+    return updated;
+}
+
+/**
+ * Delete resident
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function deleteResident(id) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident) return null;
+
+    removeResident(id);
+    return { success: true, id };
+}
+
+/**
+ * Get parking history for resident
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getResidentParkingHistory(id) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident) return null;
+
+    // For now, return current allocation as single history item
+    const allocation = state.allocations.find((a) => a.residentId === id);
+    if (!allocation) return [];
+
+    const spot = state.spots.find((s) => s.id === allocation.spotId);
+
+    return [
+        {
+            id: `${id}-${allocation.spotId}`,
+            residentId: id,
+            spotId: allocation.spotId,
+            spot,
+            startDate: new Date().toISOString(),
+            endDate: allocation.validUntil,
+            status: 'active',
+        },
+    ];
+}
+
+/**
+ * Register resident for raffle
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function registerResidentForRaffle(id, data = {}) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident) return null;
+
+    // Check if already registered
+    if (resident.registeredForRaffle) {
+        throw new Error('Resident already registered for raffle');
+    }
+
+    // Check eligibility (e.g., no current parking allocation)
+    const hasAllocation = state.allocations.some((a) => a.residentId === id);
+    if (hasAllocation) {
+        throw new Error('Resident not eligible - already has parking spot');
+    }
+
+    const updated = { ...resident, registeredForRaffle: true };
+    upsertResident(updated);
+
+    return {
+        success: true,
+        message: 'Successfully registered for raffle',
+        resident: updated,
+    };
+}
+
+/**
+ * Unregister resident from raffle
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function unregisterResidentFromRaffle(id) {
+    const state = getState();
+    const resident = state.residents.find((r) => r.id === id);
+
+    if (!resident || !resident.registeredForRaffle) return null;
+
+    const updated = { ...resident, registeredForRaffle: false };
+    upsertResident(updated);
+
+    return { success: true };
+}
+
+/**
+ * Get all raffles
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getAllRaffles(params = {}) {
+    const { page = 1, limit = 10, status } = params;
+    const state = getState();
+    let filtered = [...state.raffles];
+
+    // Apply status filter
+    if (status) {
+        filtered = filtered.filter((r) => r.status === status);
+    }
+
+    // Pagination
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const raffles = filtered.slice(start, start + limit);
+
+    return {
+        raffles,
+        total,
+        page,
+        totalPages,
+    };
+}
+
+/**
+ * Get current active raffle
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getCurrentRaffle() {
+    const state = getState();
+    const currentRaffle = state.raffles.find((r) => r.status === 'active');
+    return currentRaffle || null;
+}
+
+/**
+ * Get all parking spots
+ * TODO: Replace with Supabase query when backend is integrated
+ */
+export async function getAllParkingSpots(params = {}) {
+    const { page = 1, limit = 10, building, level, status, type } = params;
+    const state = getState();
+    let filtered = [...state.spots];
+
+    // Apply filters
+    if (building) {
+        filtered = filtered.filter((s) => s.building === building);
+    }
+    if (level) {
+        filtered = filtered.filter((s) => s.level === parseInt(level, 10));
+    }
+    if (status) {
+        const isAvailable = status === 'available';
+        filtered = filtered.filter((s) => s.available === isAvailable);
+    }
+    if (type) {
+        filtered = filtered.filter((s) => s.type === type);
+    }
+
+    // Pagination
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const spots = filtered.slice(start, start + limit);
+
+    return {
+        spots,
+        total,
+        page,
+        totalPages,
+    };
+}
+
+/**
+ * Assign parking spot to resident
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function assignParkingSpot(spotId, data) {
+    const state = getState();
+    const spot = state.spots.find((s) => s.id === spotId);
+
+    if (!spot) return null;
+    if (!spot.available) {
+        throw new Error('Parking spot already assigned');
+    }
+
+    const { residentId, startDate, endDate, notes } = data;
+
+    // Update spot availability
+    upsertSpot({ ...spot, available: false });
+
+    // Create allocation
+    const allocation = {
+        id: `${residentId}-${spotId}`,
+        residentId,
+        spotId,
+        startDate,
+        validUntil: endDate,
+        notes,
+        createdAt: new Date().toISOString(),
+    };
+
+    setState((s) => ({
+        ...s,
+        allocations: [...s.allocations, allocation],
+    }));
+
+    return {
+        success: true,
+        allocation,
+    };
+}
+
+/**
+ * Release parking spot
+ * TODO: Replace with Supabase mutation when backend is integrated
+ */
+export async function releaseParkingSpot(spotId, data = {}) {
+    const state = getState();
+    const spot = state.spots.find((s) => s.id === spotId);
+
+    if (!spot) return null;
+
+    const allocation = state.allocations.find((a) => a.spotId === spotId);
+    if (!allocation) {
+        throw new Error('Parking spot is not assigned');
+    }
+
+    // Update spot availability
+    upsertSpot({ ...spot, available: true });
+
+    // Remove allocation
+    setState((s) => ({
+        ...s,
+        allocations: s.allocations.filter((a) => a.spotId !== spotId),
+    }));
+
+    return { success: true };
+}

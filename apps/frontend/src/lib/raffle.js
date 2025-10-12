@@ -38,3 +38,50 @@ export function runRaffle() {
 
     return raffle;
 }
+
+/**
+ * Execute a raffle by ID or 'current'
+ * Used by API route /api/raffles/[id]/execute
+ * TODO: Replace with actual Supabase implementation
+ */
+export async function executeRaffle(raffleId, options = {}) {
+    const { sendNotifications = true, algorithm = 'random' } = options;
+
+    // For now, use the existing runRaffle logic
+    // In the future, this would:
+    // 1. Fetch raffle from database by ID
+    // 2. Validate raffle status (not already executed)
+    // 3. Run the algorithm (random, weighted, etc.)
+    // 4. Update database with results
+    // 5. Send notifications if requested
+
+    if (algorithm !== 'random') {
+        throw new Error(`Algorithm "${algorithm}" not yet implemented`);
+    }
+
+    const raffle = runRaffle();
+
+    // Mock response format
+    const winners = raffle.assignments.map((assignment) => {
+        const s = getState();
+        const resident = s.residents.find(
+            (r) => r.id === assignment.residentId,
+        );
+        const spot = s.spots.find((sp) => sp.id === assignment.spotId);
+
+        return {
+            residentId: assignment.residentId,
+            resident,
+            spotId: assignment.spotId,
+            spot,
+        };
+    });
+
+    return {
+        success: true,
+        raffleId: raffle.id,
+        winners,
+        executedAt: raffle.date,
+        notificationsSent: sendNotifications,
+    };
+}
