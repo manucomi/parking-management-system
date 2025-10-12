@@ -8,9 +8,14 @@ Next.js application for managing parking spot allocation through automated raffl
 
 ---
 
-## 🌐 Live Demo
+## 🌐 Live Environments
 
-**Production:** [https://parking-management-system-frontend-rho.vercel.app/](https://parking-management-system-frontend-rho.vercel.app/)
+| Environment    | URL                                                                                                             | Description                       |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **Production** | [parking-management-system-frontend-rho.vercel.app](https://parking-management-system-frontend-rho.vercel.app/) | Latest stable release from `main` |
+| **Preview**    | Auto-generated per PR                                                                                           | Test changes before merging       |
+
+> **Note:** Every PR automatically gets a preview deployment from Vercel for QA testing.
 
 ---
 
@@ -154,6 +159,12 @@ Every push to `main` triggers an automated deployment to Vercel:
 3. **Building** - Production build verification
 4. **Deploy** - Automatic deployment to Vercel
 
+**Preview Deployments:**
+
+- Every PR gets an automatic preview deployment
+- Vercel bot comments with preview URL
+- Updated on each new commit to the PR
+
 See [CI/CD Documentation](../../docs/deployment/frontend-ci-cd.md) for details.
 
 ---
@@ -171,9 +182,14 @@ See [CI/CD Documentation](../../docs/deployment/frontend-ci-cd.md) for details.
 
 1. Create a feature branch from `main`
 2. Make your changes with tests
-3. Ensure all tests pass: `npm test`
-4. Ensure linting passes: `npm run lint`
-5. Open a PR with clear description
+3. Create a changeset: `npm run change:add`
+4. Ensure all tests pass: `npm test`
+5. Ensure linting passes: `npm run lint`
+6. Open a PR (Vercel will create a preview deployment)
+7. Get code review and approval
+8. Merge to `main` (auto-deploys to production)
+
+See [Changesets Guide](../../docs/deployment/changesets-guide.md) for version management.
 
 ---
 

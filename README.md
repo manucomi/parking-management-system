@@ -104,6 +104,11 @@ npm run dev
 
 - Frontend (Live): https://parking-management-system-frontend-rho.vercel.app/
 
+**Preview (PR deployments):**
+
+- Automatic preview URL generated for each PR
+- Check Vercel bot comment on your PR for the link
+
 For detailed setup instructions, see the [Onboarding Guide](./docs/team/onboarding-guide.md).
 
 ---

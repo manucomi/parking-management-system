@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import classNames from 'classnames';
 import FormInput from '@/components/FormInput/FormInput';
 import Button from '@/components/Button/Button';
 import Card from '@/components/Card/Card';
@@ -55,8 +56,8 @@ export default function Login() {
     return (
         <div className={styles.container}>
             <div className={styles.wrapper}>
-                <div className={styles["header-section"]}>
-                    <h1 className={styles["main-title"]}>
+                <div className={styles['header-section']}>
+                    <h1 className={styles['main-title']}>
                         Parking Management System
                     </h1>
                     <p className={styles.subtitle}>
@@ -67,13 +68,18 @@ export default function Login() {
                 <Card className={styles.card}>
                     <div className={styles.tabs}>
                         <button
-                            className={`${styles.tab} ${activeTab === 'login' ? styles["active-tab"] : ''}`}
+                            className={classNames(styles.tab, {
+                                [styles['active-tab']]: activeTab === 'login',
+                            })}
                             onClick={() => setActiveTab('login')}
                         >
                             Login
                         </button>
                         <button
-                            className={`${styles.tab} ${activeTab === 'register' ? styles["active-tab"] : ''}`}
+                            className={classNames(styles.tab, {
+                                [styles['active-tab']]:
+                                    activeTab === 'register',
+                            })}
                             onClick={() => setActiveTab('register')}
                         >
                             Register
@@ -103,21 +109,33 @@ export default function Login() {
                                 required
                             />
 
-                            <div className={styles["role-selector"]}>
-                                <label className={styles["role-label"]}>
+                            <div className={styles['role-selector']}>
+                                <label className={styles['role-label']}>
                                     Login as:
                                 </label>
-                                <div className={styles["role-buttons"]}>
+                                <div className={styles['role-buttons']}>
                                     <button
                                         type="button"
-                                        className={`${styles["role-button"]} ${userRole === 'resident' ? styles["role-button-active"] : ''}`}
+                                        className={classNames(
+                                            styles['role-button'],
+                                            {
+                                                [styles['role-button-active']]:
+                                                    userRole === 'resident',
+                                            },
+                                        )}
                                         onClick={() => setUserRole('resident')}
                                     >
                                         Resident
                                     </button>
                                     <button
                                         type="button"
-                                        className={`${styles["role-button"]} ${userRole === 'admin' ? styles["role-button-active"] : ''}`}
+                                        className={classNames(
+                                            styles['role-button'],
+                                            {
+                                                [styles['role-button-active']]:
+                                                    userRole === 'admin',
+                                            },
+                                        )}
                                         onClick={() => setUserRole('admin')}
                                     >
                                         Admin
@@ -125,19 +143,22 @@ export default function Login() {
                                 </div>
                             </div>
 
-                            <div className={styles["login-options"]}>
-                                <label className={styles["remember-me"]}>
+                            <div className={styles['login-options']}>
+                                <label className={styles['remember-me']}>
                                     <FormInput type="checkbox" />
                                     <span>Remember me</span>
                                 </label>
-                                <a href="#" className={styles["forgot-password"]}>
+                                <a
+                                    href="#"
+                                    className={styles['forgot-password']}
+                                >
                                     Forgot Password?
                                 </a>
                             </div>
 
                             <Button
                                 type="submit"
-                                className={styles["submit-button"]}
+                                className={styles['submit-button']}
                             >
                                 Login
                             </Button>
@@ -183,10 +204,10 @@ export default function Login() {
                                 required
                             />
 
-                            <div className={styles["register-button-wrapper"]}>
+                            <div className={styles['register-button-wrapper']}>
                                 <Button
                                     type="submit"
-                                    className={styles["submit-button"]}
+                                    className={styles['submit-button']}
                                 >
                                     Register
                                 </Button>

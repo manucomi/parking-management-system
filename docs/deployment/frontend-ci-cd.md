@@ -11,11 +11,14 @@ The pipeline ensures that every code change is validated before deployment and t
 **Workflow File:**  
 `.github/workflows/frontend-ci.yml`
 
-**Deployed Environment:**  
-Vercel – `apps/frontend`
+**Deployed Environments:**
 
-**Production URL:**  
-🌐 [https://parking-management-system-frontend-rho.vercel.app/](https://parking-management-system-frontend-rho.vercel.app/)
+| Environment    | URL                                                                                                                | Trigger         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ | --------------- |
+| **Production** | 🌐 [parking-management-system-frontend-rho.vercel.app](https://parking-management-system-frontend-rho.vercel.app/) | Merge to `main` |
+| **Preview**    | 🔍 Auto-generated per PR                                                                                           | Every PR commit |
+
+> **Note:** Vercel automatically creates preview deployments for every PR, allowing reviewers to test changes before merging.
 
 ---
 
@@ -189,7 +192,38 @@ deploy:
 
 ---
 
-## 🔐 Secrets
+## � Preview Deployments (Vercel)
+
+Vercel automatically creates **preview deployments** for every PR, independent of the GitHub Actions workflow.
+
+### How it works:
+
+1. **Open a PR** → Vercel detects the PR
+2. **Auto-deploy** → Creates unique preview URL
+3. **Comment on PR** → Vercel bot posts preview link
+4. **Update on push** → Re-deploys on every new commit
+5. **Cleanup** → Removes preview after PR is merged/closed
+
+### Benefits:
+
+| Benefit                     | Description                                        |
+| --------------------------- | -------------------------------------------------- |
+| **QA Testing**              | Reviewers can test live changes before approval    |
+| **Visual Review**           | See UI changes in action, not just code            |
+| **Share with Stakeholders** | Send preview link for non-technical feedback       |
+| **No Config Needed**        | Works automatically with Vercel GitHub integration |
+
+### Example Preview URL:
+
+```
+https://parking-management-system-frontend-[hash]-manucomi.vercel.app
+```
+
+> **Tip:** Look for the Vercel bot comment on your PR with the preview link! 🔗
+
+---
+
+## �🔐 Secrets
 
 Required GitHub Secrets (Settings → Secrets → Actions):
 
@@ -289,8 +323,18 @@ git push origin feat/add-pagination
 #   ✅ Lint (PASS)
 #   ✅ Test (PASS - 90%+ coverage)
 #   ✅ Build (PASS)
+#
+# Vercel automatically:
+#   🔍 Creates preview deployment
+#   💬 Comments on PR with preview URL
+#   🔗 https://parking-management-[hash].vercel.app
 
-# 6. Get approval and merge
+# 6. Review & Test
+# - Code review by team
+# - Test preview deployment
+# - Approve PR
+
+# 7. Get approval and merge
 # GitHub Actions runs:
 #   ⏭️ Release (auto-bumps: 1.2.0 → 1.3.0, updates CHANGELOG)
 #   ⏭️ Deploy (triggers Vercel)
@@ -302,21 +346,29 @@ git push origin feat/add-pagination
 
 ## 🧭 Future Improvements
 
-| Improvement                 | Description                                                        |
-| --------------------------- | ------------------------------------------------------------------ |
-| Preview Deployments         | Trigger temporary preview deployments on each PR for QA validation |
-| Parallel CI Jobs            | Split lint/test/build into separate jobs for faster execution      |
-| Automated Lighthouse Audits | Integrate Lighthouse CI to check performance and accessibility     |
-| Slack Notifications         | Notify team on deploy success or failure                           |
-| Release Tags                | Auto-create Git tags for each release version                      |
+| Improvement                 | Description                                                    | Status                     |
+| --------------------------- | -------------------------------------------------------------- | -------------------------- |
+| **Preview Deployments**     | Automatic preview deployments on each PR for QA validation     | ✅ **Active** (via Vercel) |
+| Parallel CI Jobs            | Split lint/test/build into separate jobs for faster execution  | 📋 Planned                 |
+| Automated Lighthouse Audits | Integrate Lighthouse CI to check performance and accessibility | 📋 Planned                 |
+| Slack Notifications         | Notify team on deploy success or failure                       | 📋 Planned                 |
+| Release Tags                | Auto-create Git tags for each release version                  | 📋 Planned                 |
+| E2E Testing                 | Add Playwright/Cypress tests to CI pipeline                    | 📋 Planned                 |
 
 ---
 
 ## 🧾 References
 
+### Internal Documentation
+
+- [Changesets Guide](./changesets-guide.md) - Version management workflow
+- [Vercel Preview Deployments](./vercel-preview-deployments.md) - PR preview deployments guide
+
+### External Resources
+
 - [Changesets Documentation](https://github.com/changesets/changesets)
-- [Changesets Guide](./changesets-guide.md) ← **Internal Guide**
 - [Vercel – Build & Deploy Settings](https://vercel.com/docs/concepts/deployments/overview)
+- [Vercel Preview Deployments](https://vercel.com/docs/concepts/deployments/preview-deployments)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Next.js Deployment Guide](https://nextjs.org/docs/deployment)
 
