@@ -2,6 +2,9 @@
 
 A scalable web platform for fair parking spot allocation in residential units, featuring automated raffle-based assignments, allocation history tracking, and a foundation for AI-powered expansions.
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://parking-management-system-frontend-rho.vercel.app/)
+[![CI/CD](https://img.shields.io/badge/CI/CD-GitHub_Actions-blue?style=for-the-badge&logo=githubactions)](https://github.com/manucomi/parking-management-system/actions)
+
 ---
 
 ## 🎯 Project Overview
@@ -35,7 +38,8 @@ This system manages parking spot allocation for residential complexes through a 
 - **Backend:** Node.js + Express (REST API)
 - **Database:** PostgreSQL via Supabase
 - **Cache:** Custom SSR cache (future: Redis/Upstash)
-- **Hosting:** Vercel (FE) + Render (BE)
+- **Hosting:** Vercel (Frontend) + Render (Backend)
+- **CI/CD:** GitHub Actions → Vercel Deploy Hooks
 
 ---
 
@@ -91,8 +95,14 @@ npm run dev
 
 ### Access the Application
 
+**Development:**
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000/api
+
+**Production:**
+
+- Frontend (Live): https://parking-management-system-frontend-rho.vercel.app/
 
 For detailed setup instructions, see the [Onboarding Guide](./docs/team/onboarding-guide.md).
 
@@ -108,6 +118,7 @@ All design assets and specifications are organized in `/docs/ui/`:
 - **[SCSS Architecture](./apps/frontend/src/scss/README.md)** — Design token implementation
 
 ### Design → Code Mapping
+
 - Color palette: `/apps/frontend/src/scss/variables/_colors.scss`
 - Typography: `/apps/frontend/src/scss/variables/_typography.scss`
 - Components: `/apps/frontend/src/components/`
@@ -150,14 +161,21 @@ parking-management-system/
 
 ## 🤝 Contributing
 
-This project follows a **collaborative engineering workflow**:
+This project follows a **collaborative engineering workflow** with automated version management:
 
-1. Create a feature branch
-2. Make changes with clear commit messages
-3. Open a PR with description and tests
-4. Get reviewed and merge
+1. **Create a feature branch** from `main`
+2. **Make changes** with clear commit messages
+3. **Create a changeset**: `npm run change:add`
+    - Documents what changed for release notes
+    - Required for all PRs (CI will block without it)
+4. **Open a PR** with description and tests
+5. **Get reviewed** and merge
+6. **Auto-release** - CI automatically:
+    - Bumps version (semver)
+    - Generates changelog
+    - Deploys to production
 
-See [Delegation Plan](./docs/team/delegation-plan.md) for team collaboration details.
+See [Changesets Guide](./docs/deployment/changesets-guide.md) and [Delegation Plan](./docs/team/delegation-plan.md) for details.
 
 ---
 
