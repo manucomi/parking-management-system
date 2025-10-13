@@ -44,3 +44,23 @@ export const getCurrentRaffle = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAllRaffles = async (req, res, next) => {
+    try {
+        const raffles = await raffleService.getAllRaffles();
+        res.json({ success: true, data: raffles });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getRaffleParticipants = async (req, res, next) => {
+    try {
+        const { raffleId } = req.params;
+        const participants =
+            await raffleService.getRaffleParticipants(raffleId);
+        res.json({ success: true, data: participants });
+    } catch (error) {
+        next(error);
+    }
+};

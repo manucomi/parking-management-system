@@ -33,7 +33,7 @@ describe('RaffleService', () => {
 
             const result = await RaffleService.getCurrentRaffle();
 
-            expect(fetcher.get).toHaveBeenCalledWith('/api/raffles/current');
+            expect(fetcher.get).toHaveBeenCalledWith('/api/raffle/current');
             expect(result).toEqual(mockRaffle);
         });
     });
@@ -45,7 +45,7 @@ describe('RaffleService', () => {
 
             const result = await RaffleService.getAllRaffles();
 
-            expect(fetcher.get).toHaveBeenCalledWith('/api/raffles');
+            expect(fetcher.get).toHaveBeenCalledWith('/api/raffle/all');
             expect(result).toEqual(mockResponse);
         });
 
@@ -55,7 +55,7 @@ describe('RaffleService', () => {
             await RaffleService.getAllRaffles({ status: 'completed' });
 
             expect(fetcher.get).toHaveBeenCalledWith(
-                '/api/raffles?status=completed',
+                '/api/raffle/all?status=completed',
             );
         });
     });
@@ -67,7 +67,7 @@ describe('RaffleService', () => {
 
             const result = await RaffleService.getRaffleById(1);
 
-            expect(fetcher.get).toHaveBeenCalledWith('/api/raffles/1');
+            expect(fetcher.get).toHaveBeenCalledWith('/api/raffle/1');
             expect(result).toEqual(mockRaffle);
         });
     });
@@ -81,7 +81,7 @@ describe('RaffleService', () => {
             const result = await RaffleService.createRaffle(raffleData);
 
             expect(fetcher.post).toHaveBeenCalledWith(
-                '/api/raffles',
+                '/api/raffle',
                 raffleData,
             );
             expect(result).toEqual(mockResponse);
@@ -96,8 +96,7 @@ describe('RaffleService', () => {
             const result = await RaffleService.runRaffle();
 
             expect(fetcher.post).toHaveBeenCalledWith(
-                '/api/raffles/current/execute',
-                {},
+                '/api/raffle/run',
             );
             expect(result).toEqual(mockResponse);
         });
@@ -109,8 +108,7 @@ describe('RaffleService', () => {
             await RaffleService.runRaffle(5, { sendNotifications: true });
 
             expect(fetcher.post).toHaveBeenCalledWith(
-                '/api/raffles/5/execute',
-                { sendNotifications: true },
+                '/api/raffle/run',
             );
         });
     });
@@ -123,7 +121,7 @@ describe('RaffleService', () => {
             const result = await RaffleService.getRaffleParticipants(1);
 
             expect(fetcher.get).toHaveBeenCalledWith(
-                '/api/raffles/1/participants',
+                '/api/raffle/1/participants',
             );
             expect(result).toEqual(mockParticipants);
         });

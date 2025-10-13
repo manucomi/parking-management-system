@@ -17,7 +17,7 @@ console.log('=== DATABASE CONFIG ===');
 console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
 console.log(
     'DATABASE_URL (first 50 chars):',
-    process.env.DATABASE_URL?.substring(0, 50) + '...',
+    process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 50) + '...' : 'NOT SET',
 );
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('SSL enabled:', process.env.NODE_ENV === 'production');

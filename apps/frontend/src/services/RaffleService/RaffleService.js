@@ -4,7 +4,7 @@
 
 import { get, post, buildQueryString } from '@/utils/fetcher';
 
-const BASE_URL = '/api/raffles';
+const BASE_URL = '/api/raffle';
 
 export async function getCurrentRaffle() {
     return get(`${BASE_URL}/current`);
@@ -12,7 +12,7 @@ export async function getCurrentRaffle() {
 
 export async function getAllRaffles(params = {}) {
     const queryString = buildQueryString(params);
-    return get(`${BASE_URL}${queryString}`);
+    return get(`${BASE_URL}/all${queryString}`);
 }
 
 export async function getRaffleById(id) {
@@ -23,11 +23,15 @@ export async function createRaffle(raffleData) {
     return post(BASE_URL, raffleData);
 }
 
-export async function runRaffle(id = 'current', options = {}) {
-    return post(`${BASE_URL}/${id}/execute`, options);
+export async function runRaffle() {
+    return post(`${BASE_URL}/run`);
 }
 
-export async function getRaffleParticipants(id, params = {}) {
+export async function getRaffleParticipants(raffleId, params = {}) {
     const queryString = buildQueryString(params);
-    return get(`${BASE_URL}/${id}/participants${queryString}`);
+    return get(`${BASE_URL}/${raffleId}/participants${queryString}`);
+}
+
+export async function getRaffleResults() {
+    return get(`${BASE_URL}/results`);
 }
