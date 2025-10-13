@@ -4,6 +4,13 @@
  */
 
 /**
+ * Get the base URL for API calls
+ * In production (Vercel), use the backend URL from environment variable
+ * In development, use localhost backend
+ */
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+/**
  * Custom error class for API errors
  */
 export class ApiError extends Error {
@@ -26,12 +33,15 @@ const defaultConfig = {
 
 /**
  * Main fetcher function that wraps fetch with JSON handling and error parsing
- * @param {string} url - The URL to fetch
+ * @param {string} url - The URL to fetch (will be prefixed with API_BASE_URL if relative)
  * @param {RequestInit} options - Fetch options (method, headers, body, etc.)
  * @returns {Promise<any>} Parsed JSON response
  * @throws {ApiError} When the response is not ok
  */
 export async function fetcher(url, options = {}) {
+    // If URL is relative, prepend the API base URL
+    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+
     const config = {
         ...defaultConfig,
         ...options,
@@ -42,7 +52,7 @@ export async function fetcher(url, options = {}) {
     };
 
     try {
-        const response = await fetch(url, config);
+        const response = await fetch(fullUrl, config);
 
         // Parse response body (if exists)
         let data = null;
