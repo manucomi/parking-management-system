@@ -45,17 +45,32 @@ app.get('/health', (req, res) => {
 // Debug endpoint to test database connection
 app.get('/api/debug/db', async (req, res) => {
     try {
+        const hasDbUrl = !!process.env.DATABASE_URL;
+        const dbUrlPrefix = process.env.DATABASE_URL
+            ? process.env.DATABASE_URL.substring(0, 20) + '...'
+            : 'NOT SET';
+
         const result = await pool.query('SELECT NOW()');
         res.json({
             success: true,
             message: 'Database connected',
             timestamp: result.rows[0],
+            config: {
+                hasDbUrl,
+                dbUrlPrefix,
+                nodeEnv: process.env.NODE_ENV,
+            },
         });
     } catch (error) {
         res.status(500).json({
             success: false,
             message: 'Database connection failed',
             error: error.message,
+            code: error.code,
+            hasDbUrl: !!process.env.DATABASE_URL,
+            dbUrlPrefix: process.env.DATABASE_URL
+                ? process.env.DATABASE_URL.substring(0, 20) + '...'
+                : 'NOT SET',
             stack:
                 process.env.NODE_ENV === 'development'
                     ? error.stack

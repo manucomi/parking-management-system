@@ -137,21 +137,49 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
 
 // SSR with cache: This runs on the server on every request
 export async function getServerSideProps() {
-    try {
-        const API_URL =
-            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
+    console.log('=== getServerSideProps START ===');
+    console.log('API_URL:', API_URL);
+    console.log('Environment:', process.env.NODE_ENV);
+
+    try {
         // Use cache service to fetch residents
         const fetchResidents = async () => {
-            const response = await fetch(`${API_URL}/api/residents`);
+            const url = `${API_URL}/api/residents`;
+            console.log('Fetching from:', url);
+
+            const response = await fetch(url);
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            console.log(
+                'Response headers:',
+                Object.fromEntries(response.headers.entries()),
+            );
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                console.error('Response error body:', errorText);
+                throw new Error(
+                    `HTTP error! status: ${response.status}, body: ${errorText}`,
+                );
             }
-            return response.json();
+
+            const data = await response.json();
+            console.log(
+                'Response data:',
+                JSON.stringify(data).substring(0, 200),
+            );
+            return data;
         };
 
         // Wrap the fetch with cache (network-first strategy)
+        console.log('Calling cache service...');
         const data = await cacheService.wrap('residents-list', fetchResidents);
+        console.log(
+            'Cache service returned, data.data length:',
+            data?.data?.length,
+        );
 
         return {
             props: {
@@ -160,7 +188,14 @@ export async function getServerSideProps() {
             },
         };
     } catch (error) {
-        console.error('Error fetching residents:', error);
+        console.error('=== ERROR in getServerSideProps ===');
+        console.error('Error type:', error.constructor.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error(
+            'Full error:',
+            JSON.stringify(error, Object.getOwnPropertyNames(error)),
+        );
 
         // Return empty array on error, but preserve any cached data
         return {
@@ -169,6 +204,8 @@ export async function getServerSideProps() {
                 error: error.message || 'Failed to load residents',
             },
         };
+    } finally {
+        console.log('=== getServerSideProps END ===');
     }
 }
 
