@@ -5,21 +5,19 @@ import Pagination from '@/components/Pagination/Pagination';
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
 import styles from './residents.module.scss';
 import { useMemo, useState } from 'react';
-import { useResidents } from '@/hooks/useApi';
-import {
-    createResident,
-    deleteResident,
-    updateResident,
-} from '@/services/ResidentService/ResidentService';
+import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 
-function ResidentsPage() {
+// Server-side cache service
+const cacheService = new NetworkFirstCacheService({
+    timeout: 3000,
+    logCacheOperations: true,
+});
+
+function ResidentsPage({ residents: initialResidents, error: serverError }) {
     const [q, setQ] = useState('');
     const [page, setPage] = useState(1);
     const [open, setOpen] = useState(false);
-
-    // Fetch residents from backend
-    const { data: residentsData, loading, error, refetch } = useResidents();
-    const residents = residentsData?.data || [];
+    const [residents, setResidents] = useState(initialResidents || []);
 
     const filtered = useMemo(
         () =>
@@ -40,7 +38,7 @@ function ResidentsPage() {
     const tableData = pageRows.map((r) => ({
         name: r.name,
         email: r.email,
-        building: 'N/A', // Backend doesn't have building field
+        building: r.building || 'N/A',
         apartment: r.apartment_number || 'N/A',
         status: r.has_parking ? 'Assigned' : 'No Parking',
     }));
@@ -62,50 +60,46 @@ function ResidentsPage() {
                         Add Resident
                     </button>
                 </header>
+
                 <SearchBar
                     placeholder="Search residents..."
                     value={q}
                     onChange={setQ}
                 />
-                {loading && (
-                    <div className={styles.loading}>Loading residents...</div>
-                )}
-                {error && (
+
+                {serverError && (
                     <div className={styles.error}>
-                        Error loading residents: {error}
-                        <button onClick={refetch}>Retry</button>
+                        Error loading residents: {serverError}
                     </div>
                 )}
-                {!loading && !error && (
-                    <section className={styles.card}>
-                        <Table
-                            columns={[
-                                { header: 'Name', key: 'name' },
-                                { header: 'Email', key: 'email' },
-                                { header: 'Building', key: 'building' },
-                                { header: 'Apartment', key: 'apartment' },
-                                { header: 'Parking Status', key: 'status' },
-                            ]}
-                            data={tableData}
+
+                <section className={styles.card}>
+                    <Table
+                        columns={[
+                            { header: 'Name', key: 'name' },
+                            { header: 'Email', key: 'email' },
+                            { header: 'Building', key: 'building' },
+                            { header: 'Apartment', key: 'apartment' },
+                            { header: 'Parking Status', key: 'status' },
+                        ]}
+                        data={tableData}
+                    />
+                    <div className={styles.footer}>
+                        <span>
+                            Showing {pageRows.length} of {filtered.length}{' '}
+                            residents
+                        </span>
+                        <Pagination
+                            page={page}
+                            total={totalPages}
+                            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+                            onNext={() =>
+                                setPage((p) => Math.min(totalPages, p + 1))
+                            }
                         />
-                        <div className={styles.footer}>
-                            <span>
-                                Showing {pageRows.length} of {filtered.length}{' '}
-                                residents
-                            </span>
-                            <Pagination
-                                page={page}
-                                total={totalPages}
-                                onPrev={() =>
-                                    setPage((p) => Math.max(1, p - 1))
-                                }
-                                onNext={() =>
-                                    setPage((p) => Math.min(totalPages, p + 1))
-                                }
-                            />
-                        </div>
-                    </section>
-                )}{' '}
+                    </div>
+                </section>
+
                 <ConfirmModal
                     open={open}
                     title="Add New Resident"
@@ -139,6 +133,43 @@ function ResidentsPage() {
             </main>
         </div>
     );
+}
+
+// SSR with cache: This runs on the server on every request
+export async function getServerSideProps() {
+    try {
+        const API_URL =
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+        // Use cache service to fetch residents
+        const fetchResidents = async () => {
+            const response = await fetch(`${API_URL}/api/residents`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        };
+
+        // Wrap the fetch with cache (network-first strategy)
+        const data = await cacheService.wrap('residents-list', fetchResidents);
+
+        return {
+            props: {
+                residents: data.data || [],
+                error: null,
+            },
+        };
+    } catch (error) {
+        console.error('Error fetching residents:', error);
+
+        // Return empty array on error, but preserve any cached data
+        return {
+            props: {
+                residents: [],
+                error: error.message || 'Failed to load residents',
+            },
+        };
+    }
 }
 
 export default withAdminLayout(ResidentsPage);
