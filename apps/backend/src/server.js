@@ -7,6 +7,7 @@ import raffleRoutes from './routes/raffleRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
+import pool from './config/database.js';
 
 dotenv.config();
 
@@ -39,6 +40,28 @@ app.use(requestLogger);
 
 app.get('/health', (req, res) => {
     res.json({ success: true, message: 'Server is running' });
+});
+
+// Debug endpoint to test database connection
+app.get('/api/debug/db', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT NOW()');
+        res.json({
+            success: true,
+            message: 'Database connected',
+            timestamp: result.rows[0],
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Database connection failed',
+            error: error.message,
+            stack:
+                process.env.NODE_ENV === 'development'
+                    ? error.stack
+                    : undefined,
+        });
+    }
 });
 
 app.use('/api/residents', residentRoutes);
