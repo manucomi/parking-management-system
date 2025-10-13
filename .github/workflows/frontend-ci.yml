@@ -59,8 +59,9 @@ jobs:
         needs: validate_app
         runs-on: ubuntu-latest
         if: |
-            needs.validate_app.result == 'success' &&
-            github.event_name == 'push' &&
+            always() && 
+            needs.frontend_ci.result == 'success' && 
+            github.event_name == 'push' && 
             github.ref == 'refs/heads/main'
 
         steps:
