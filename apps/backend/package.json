@@ -7,6 +7,7 @@
     "scripts": {
         "dev": "nodemon src/server.js",
         "start": "node src/server.js",
+        "validate": "node --check src/server.js",
         "lint": "eslint src/**/*.js",
         "db:init": "node src/initDb.js",
         "db:verify": "node src/verifySchema.js"

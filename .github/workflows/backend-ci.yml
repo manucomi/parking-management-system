@@ -46,8 +46,8 @@ jobs:
             - name: Run Linter
               run: npm run lint || echo "Lint warnings ignored"
 
-            - name: Build Backend
-              run: npm run build
+            - name: Validate Syntax
+              run: npm run validate
 
     deploy:
         name: Deploy to Render
