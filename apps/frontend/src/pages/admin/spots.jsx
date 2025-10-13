@@ -102,7 +102,7 @@ function SpotsPage({ spots: initialSpots, error: serverError }) {
                             { header: 'Status', key: 'status' },
                             { header: 'Assigned To', key: 'assignedTo' },
                         ]}
-                        rows={rows}
+                        data={rows}
                     />
                     <div className={styles.footer}>
                         <span>
