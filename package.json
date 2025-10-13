@@ -7,7 +7,7 @@
         "build": "dotenv turbo run build -- --concurrency=50%",
         "change:add": "changeset add && git add .changeset/*.md",
         "change:add:empty": "changeset add --empty && git add .changeset/*.md",
-        "change:version": "git diff --exit-code && changeset version && git commit -am \"bumping versions and updating changelogs for release\"",
+        "change:version": "changeset version && git add . && git commit -m 'chore: version bump' || echo 'No version bump needed'",
         "clean": "rm -rf .tmp/ .next/ && npm run clean -ws --if-present",
         "clean:all": "npm run clean && rm -rf node_modules/ && npm run clean:all -ws --if-present",
         "dev": "dotenv turbo run dev",

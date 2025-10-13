@@ -88,24 +88,39 @@ jobs:
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
 
+            - name: Check for pending changesets
+              id: check_changesets
+              run: |
+                  if [ -z "$(ls -A .changeset/*.md 2>/dev/null | grep -v README)" ]; then
+                    echo "has_changesets=false" >> $GITHUB_OUTPUT
+                  else
+                    echo "has_changesets=true" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Apply version bump
+              if: steps.check_changesets.outputs.has_changesets == 'true'
               run: npm run change:version
 
             - name: Push updated version and tags
+              if: steps.check_changesets.outputs.has_changesets == 'true'
               run: |
-                  VERSION=$(node -p "require('./package.json').version")
-                  echo "📦 New version: v$VERSION"
+                  echo "🔖 Preparing to push version bump..."
                   git push origin main
-                  git tag v$VERSION
-                  git push origin v$VERSION
+
+                  echo "🏷️ Generating version tags from all bumped packages..."
+                  npx changeset tag
+                  git push origin --tags
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Create GitHub Release
+              if: steps.check_changesets.outputs.has_changesets == 'true'
               run: |
-                  VERSION=$(node -p "require('./package.json').version")
-                  echo "📝 Creating GitHub release for v$VERSION"
-                  gh release create "v$VERSION" --title "Release $VERSION" --generate-notes
+                  echo "📝 Creating GitHub release from latest tags..."
+                  npx changeset status --verbose
+                  gh release create $(git describe --tags --abbrev=0) \
+                    --title "Release $(git describe --tags --abbrev=0)" \
+                    --generate-notes
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
