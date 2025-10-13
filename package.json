@@ -15,7 +15,7 @@
         "lint:fix": "npm run lint:fix -ws --if-present",
         "lint:js": "eslint --ext .js,.jsx .",
         "lint:js:fix": "eslint --fix --ext .js,.jsx .",
-        "prepare": "husky",
+        "prepare": "husky || true",
         "release:notes": "release-it --ci",
         "storybook": "npm run -w frontend storybook",
         "test": "dotenv turbo run test --concurrency=50%"
