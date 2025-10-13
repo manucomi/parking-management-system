@@ -6,9 +6,9 @@ import styles from './spots.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 
-// Create cache service instance (singleton)
+// Create cache service instance
 const cacheService = new NetworkFirstCacheService({
-    timeout: 3000, // 3 seconds timeout
+    timeout: 3000,
     logCacheOperations: true,
 });
 
