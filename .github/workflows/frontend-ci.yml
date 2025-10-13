@@ -58,6 +58,9 @@ jobs:
         name: Version Bump & Release Notes
         needs: validate_app
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
         if: >
             always() &&
             needs.validate_app.result == 'success' &&
