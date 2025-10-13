@@ -1,5 +1,11 @@
 # frontend
 
+## 0.3.1
+
+### Patch Changes
+
+- 282307e: Fix error on raffle page
+
 ## 0.3.0
 
 ### Minor Changes
