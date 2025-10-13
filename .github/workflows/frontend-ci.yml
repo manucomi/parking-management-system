@@ -68,11 +68,11 @@ jobs:
             github.ref == 'refs/heads/main'
 
         steps:
-            - name: Checkout repository
+            - name: Checkout repository (no persistent credentials)
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  persist-credentials: false
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -101,26 +101,32 @@ jobs:
               if: steps.check_changesets.outputs.has_changesets == 'true'
               run: npm run change:version
 
-            - name: Push updated version and tags
+            - name: Push updated version and tags using PAT
               if: steps.check_changesets.outputs.has_changesets == 'true'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
               run: |
-                  echo "Preparing to push version bump..."
+                  VERSION=$(jq -r '.version' apps/frontend/package.json)
+                  echo "📦 New frontend version: v$VERSION"
+
+                  # Reconfigure remote to use PAT (bypasses branch protection)
+                  git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+                  echo "🚀 Pushing version bump to main..."
                   git push origin main
 
-                  echo "Generating version tags from all bumped packages..."
-                  npx changeset tag
-                  git push origin --tags
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  echo "🏷️ Creating version tag v$VERSION..."
+                  git tag v$VERSION
+                  git push origin v$VERSION
 
             - name: Create GitHub Release
               if: steps.check_changesets.outputs.has_changesets == 'true'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
               run: |
                   VERSION=$(jq -r '.version' apps/frontend/package.json)
                   echo "📝 Creating GitHub release for frontend v$VERSION"
-                  gh release create "v$VERSION" --title "Release $VERSION" --generate-notes
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  gh release create "v$VERSION" --title "Frontend Release $VERSION" --generate-notes
 
     deploy:
         name: Deploy to Vercel
