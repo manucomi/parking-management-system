@@ -1,5 +1,8 @@
 /**
  * @jest-environment jsdom
+ *
+ * NOTE: Some tests updated to reflect backend URL integration.
+ * Tests now expect full URLs with API_BASE_URL prefix.
  */
 
 import {
@@ -89,11 +92,14 @@ describe('fetcher', () => {
 
         const result = await fetcher('/api/test');
 
-        expect(global.fetch).toHaveBeenCalledWith('/api/test', {
-            headers: {
-                'Content-Type': 'application/json',
+        expect(global.fetch).toHaveBeenCalledWith(
+            'http://localhost:4000/api/test',
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             },
-        });
+        );
         expect(result).toEqual(mockData);
     });
 
@@ -127,12 +133,15 @@ describe('fetcher', () => {
             },
         });
 
-        expect(global.fetch).toHaveBeenCalledWith('/api/test', {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer token123',
+        expect(global.fetch).toHaveBeenCalledWith(
+            'http://localhost:4000/api/test',
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer token123',
+                },
             },
-        });
+        );
     });
 
     it('should throw ApiError on HTTP error with JSON response', async () => {
@@ -235,7 +244,7 @@ describe('HTTP method helpers', () => {
             await get('/api/test');
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test',
+                'http://localhost:4000/api/test',
                 expect.objectContaining({
                     method: 'GET',
                 }),
@@ -254,7 +263,7 @@ describe('HTTP method helpers', () => {
             await get('/api/test', { cache: 'no-cache' });
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test',
+                'http://localhost:4000/api/test',
                 expect.objectContaining({
                     method: 'GET',
                     cache: 'no-cache',
@@ -277,7 +286,7 @@ describe('HTTP method helpers', () => {
             await post('/api/test', body);
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test',
+                'http://localhost:4000/api/test',
                 expect.objectContaining({
                     method: 'POST',
                     body: JSON.stringify(body),
@@ -300,7 +309,7 @@ describe('HTTP method helpers', () => {
             await put('/api/test/1', body);
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test/1',
+                'http://localhost:4000/api/test/1',
                 expect.objectContaining({
                     method: 'PUT',
                     body: JSON.stringify(body),
@@ -323,7 +332,7 @@ describe('HTTP method helpers', () => {
             await patch('/api/test/1', body);
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test/1',
+                'http://localhost:4000/api/test/1',
                 expect.objectContaining({
                     method: 'PATCH',
                     body: JSON.stringify(body),
@@ -345,7 +354,7 @@ describe('HTTP method helpers', () => {
             await del('/api/test/1');
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test/1',
+                'http://localhost:4000/api/test/1',
                 expect.objectContaining({
                     method: 'DELETE',
                 }),
@@ -364,7 +373,7 @@ describe('HTTP method helpers', () => {
             await del('/api/test/1', { headers: { 'X-Custom': 'value' } });
 
             expect(global.fetch).toHaveBeenCalledWith(
-                '/api/test/1',
+                'http://localhost:4000/api/test/1',
                 expect.objectContaining({
                     method: 'DELETE',
                     headers: expect.objectContaining({
