@@ -169,3 +169,34 @@ export const getCurrent = async () => {
         totalParticipants: parseInt(participants.rows[0].total),
     };
 };
+
+export const getAllRaffles = async () => {
+    const result = await pool.query(
+        `SELECT r.id, r.status, r.created_at, r.executed_at,
+                COUNT(DISTINCT rp.resident_id) as total_participants,
+                COUNT(DISTINCT ah.id) as total_assigned
+         FROM raffles r
+         LEFT JOIN raffle_participants rp ON rp.raffle_id = r.id
+         LEFT JOIN allocation_history ah ON ah.raffle_id = r.id
+         GROUP BY r.id
+         ORDER BY r.created_at DESC`,
+    );
+
+    return result.rows;
+};
+
+export const getRaffleParticipants = async (raffleId) => {
+    const result = await pool.query(
+        `SELECT rp.id, rp.registered_at,
+                res.id as resident_id, res.name, res.email, res.apartment_number,
+                ps.number as current_spot
+         FROM raffle_participants rp
+         JOIN residents res ON res.id = rp.resident_id
+         LEFT JOIN parking_spots ps ON ps.assigned_to = res.id
+         WHERE rp.raffle_id = $1
+         ORDER BY rp.registered_at ASC`,
+        [raffleId],
+    );
+
+    return result.rows;
+};
