@@ -1,5 +1,14 @@
 export const errorHandler = (err, req, res, _next) => {
-    console.error('Error:', err.message);
+    console.error('=== ERROR HANDLER ===');
+    console.error('Request:', req.method, req.path);
+    console.error('Error Type:', err.constructor.name);
+    console.error('Error Message:', err.message);
+    console.error('Error Stack:', err.stack);
+    console.error('Error Code:', err.code);
+    console.error(
+        'Error Full:',
+        JSON.stringify(err, Object.getOwnPropertyNames(err)),
+    );
 
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal Server Error';

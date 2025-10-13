@@ -2,10 +2,24 @@ import pool from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 export const findAll = async () => {
-    const result = await pool.query(
-        'SELECT * FROM residents ORDER BY created_at DESC',
-    );
-    return result.rows;
+    try {
+        console.log('residentService.findAll - Starting query...');
+        console.log('Pool:', !!pool);
+        const result = await pool.query(
+            'SELECT * FROM residents ORDER BY created_at DESC',
+        );
+        console.log(
+            'residentService.findAll - Query successful, rows:',
+            result.rows.length,
+        );
+        return result.rows;
+    } catch (error) {
+        console.error('residentService.findAll - Query FAILED');
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Error stack:', error.stack);
+        throw error;
+    }
 };
 
 export const findById = async (id) => {
