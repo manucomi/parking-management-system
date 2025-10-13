@@ -104,10 +104,10 @@ jobs:
             - name: Push updated version and tags
               if: steps.check_changesets.outputs.has_changesets == 'true'
               run: |
-                  echo "🔖 Preparing to push version bump..."
+                  echo "Preparing to push version bump..."
                   git push origin main
 
-                  echo "🏷️ Generating version tags from all bumped packages..."
+                  echo "Generating version tags from all bumped packages..."
                   npx changeset tag
                   git push origin --tags
               env:
@@ -116,11 +116,9 @@ jobs:
             - name: Create GitHub Release
               if: steps.check_changesets.outputs.has_changesets == 'true'
               run: |
-                  echo "📝 Creating GitHub release from latest tags..."
-                  npx changeset status --verbose
-                  gh release create $(git describe --tags --abbrev=0) \
-                    --title "Release $(git describe --tags --abbrev=0)" \
-                    --generate-notes
+                  VERSION=$(jq -r '.version' apps/frontend/package.json)
+                  echo "📝 Creating GitHub release for frontend v$VERSION"
+                  gh release create "v$VERSION" --title "Release $VERSION" --generate-notes
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
