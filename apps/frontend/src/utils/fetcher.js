@@ -3,6 +3,8 @@
  * Handles JSON parsing, error handling, and authorization
  */
 
+import { supabase } from './supabaseClient';
+
 /**
  * Get the base URL for API calls
  * In production (Vercel), use the backend URL from environment variable
@@ -33,6 +35,8 @@ const defaultConfig = {
 
 /**
  * Main fetcher function that wraps fetch with JSON handling and error parsing
+ * Automatically includes JWT token from Supabase session if available.
+ *
  * @param {string} url - The URL to fetch (will be prefixed with API_BASE_URL if relative)
  * @param {RequestInit} options - Fetch options (method, headers, body, etc.)
  * @returns {Promise<any>} Parsed JSON response
@@ -42,11 +46,18 @@ export async function fetcher(url, options = {}) {
     // If URL is relative, prepend the API base URL
     const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 
+    // Get current Supabase session token
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
     const config = {
         ...defaultConfig,
         ...options,
         headers: {
             ...defaultConfig.headers,
+            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
             ...options.headers,
         },
     };
