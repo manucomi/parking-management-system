@@ -69,6 +69,18 @@ npm run dev --workspace=apps/backend
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000/api
 
+### 6. Storybook Setup
+
+To preview components locally:
+
+```bash
+cd apps/frontend
+npm run storybook
+```
+
+This launches Storybook on http://localhost:6006.  
+Ensure all new components include a `.stories.jsx` file following CSF3 format.
+
 ---
 
 ## Repository Structure
