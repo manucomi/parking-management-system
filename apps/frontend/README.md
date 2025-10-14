@@ -32,21 +32,37 @@ Next.js application for managing parking spot allocation through automated raffl
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+
 # Run development server
 npm run dev
 ```
 
 Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Environment Variables
+
+Required environment variables:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+See `.env.example` for full configuration.
+
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework:** Next.js 15 (App Router + SSR)
+- **Framework:** Next.js 15 (Pages Router + SSR)
 - **UI Library:** React 19
+- **Authentication:** Supabase Auth with SSR
 - **Styling:** SCSS Modules + CSS Variables
 - **Testing:** Jest + React Testing Library
-- **Documentation:** Storybook
 - **Linting:** ESLint + Stylelint
 - **CI/CD:** GitHub Actions → Vercel
 
@@ -122,7 +138,7 @@ See [SCSS Documentation](./src/scss/README.md) for details.
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -130,22 +146,24 @@ src/
 │   ├── Button/
 │   │   ├── Button.jsx
 │   │   ├── Button.module.scss
-│   │   ├── Button.test.jsx
-│   │   └── Button.stories.jsx
+│   │   └── Button.test.jsx
 │   └── ...
 ├── pages/               # Next.js pages/routes
 │   ├── _app.jsx
-│   ├── index.jsx
-│   ├── admin/
-│   └── resident/
+│   ├── index.jsx        # Login page
+│   ├── admin/           # Protected admin routes
+│   └── resident/        # Protected resident routes
+├── hooks/               # Custom React hooks
+│   └── useAuth.js       # Authentication hook
+├── utils/               # Utility functions
+│   ├── fetcher.js       # HTTP client with JWT
+│   ├── supabaseClient.js
+│   └── supabase/
+├── services/            # API service layer
 ├── scss/                # Global styles & variables
 │   ├── variables/
-│   │   ├── _colors.scss
-│   │   ├── _typography.scss
-│   │   └── _spacing.scss
 │   └── manifest.scss
-├── lib/                 # Utility functions
-└── data/                # Mock data
+└── middleware.js        # Next.js auth middleware
 ```
 
 ---
@@ -169,12 +187,14 @@ See [CI/CD Documentation](../../docs/deployment/frontend-ci-cd.md) for details.
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 - **[Frontend Architecture](../../FRONTEND_ARCHITECTURE.md)** - High-level overview
+- **[API Architecture](./src/API_ARCHITECTURE.md)** - Authentication and API integration
 - **[Component Documentation](../../docs/ui/ui-overview.md)** - UI component catalog
 - **[SCSS Architecture](./src/scss/README.md)** - Styling system
 - **[CI/CD Pipeline](../../docs/deployment/frontend-ci-cd.md)** - Deployment process
+- **[Authentication Guide](../../AUTHENTICATION_GUIDE.md)** - Supabase Auth setup
 
 ---
 
