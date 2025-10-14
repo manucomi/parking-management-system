@@ -5,6 +5,7 @@ import styles from './raffle.module.scss';
 import { useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 import { runRaffle } from '@/services/RaffleService/RaffleService';
+import { createClient } from '@/utils/supabase/server';
 
 function RafflePage({
     currentRaffle,
@@ -73,7 +74,12 @@ function RafflePage({
     };
 
     const nextRaffleDate = currentRaffle?.created_at
-        ? formatDate(new Date(new Date(currentRaffle.created_at).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString())
+        ? formatDate(
+              new Date(
+                  new Date(currentRaffle.created_at).getTime() +
+                      30 * 24 * 60 * 60 * 1000,
+              ).toISOString(),
+          )
         : 'Not scheduled';
 
     return (
@@ -161,9 +167,7 @@ function RafflePage({
                                             </span>
                                         )}
                                     </td>
-                                    <td>
-                                        {formatDate(row.registeredDate)}
-                                    </td>
+                                    <td>{formatDate(row.registeredDate)}</td>
                                 </tr>
                             )}
                         />
@@ -187,9 +191,7 @@ function RafflePage({
                             data={previousRaffles || []}
                             renderRow={(row, i) => (
                                 <tr key={i}>
-                                    <td>
-                                        {formatDate(row.date)}
-                                    </td>
+                                    <td>{formatDate(row.date)}</td>
                                     <td>{row.participants}</td>
                                     <td>
                                         <span className={styles.success}>
@@ -298,12 +300,48 @@ const cacheService = new NetworkFirstCacheService({
     logCacheOperations: true,
 });
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     console.log('=== Raffle getServerSideProps START ===');
     console.log('API_URL:', API_URL);
-    console.log('Environment:', process.env.NODE_ENV);
+
+    // Create Supabase server client with cookie handling
+    const supabase = createClient(context);
+
+    // Get authenticated user from Supabase (reads from cookies)
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    console.log('User authenticated:', !!user);
+    if (authError) {
+        console.error('Auth error:', authError);
+    }
+
+    // If not authenticated, redirect to login
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    // Get access token from session
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
+    console.log('Access token available:', !!accessToken);
+
+    // Helper to create auth headers
+    const authHeaders = {
+        Authorization: `Bearer ${accessToken}`,
+    };
 
     try {
         // Fetch current raffle data
@@ -311,7 +349,7 @@ export async function getServerSideProps() {
             const url = `${API_URL}/api/raffle/current`;
             console.log('[Raffle SSR] Fetching current raffle from:', url);
 
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: authHeaders });
             console.log('[Raffle SSR] Response status:', response.status);
 
             if (!response.ok) {
@@ -344,7 +382,7 @@ export async function getServerSideProps() {
                         url,
                     );
 
-                    const response = await fetch(url);
+                    const response = await fetch(url, { headers: authHeaders });
                     if (!response.ok) {
                         throw new Error(
                             `HTTP error! status: ${response.status}`,
@@ -388,7 +426,7 @@ export async function getServerSideProps() {
             const url = `${API_URL}/api/raffle/all`;
             console.log('[Raffle SSR] Fetching all raffles from:', url);
 
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: authHeaders });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -433,11 +471,6 @@ export async function getServerSideProps() {
         console.error('=== ERROR in Raffle getServerSideProps ===');
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-        console.error(
-            'Full error:',
-            JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        );
 
         return {
             props: {

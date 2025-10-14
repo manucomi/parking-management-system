@@ -5,6 +5,7 @@ import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
 import styles from './spots.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
+import { createClient } from '@/utils/supabase/server';
 
 // Create cache service instance
 const cacheService = new NetworkFirstCacheService({
@@ -138,12 +139,45 @@ function SpotsPage({ spots: initialSpots, error: serverError }) {
     );
 }
 
-// SSR with cache: This runs on the server on every request
-export async function getServerSideProps() {
+// SSR with auth: This runs on the server on every request
+// Uses Supabase SSR client to get user session from cookies
+export async function getServerSideProps(context) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     console.log('=== getServerSideProps (spots) START ===');
     console.log('API_URL:', API_URL);
+
+    // Create Supabase server client with cookie handling
+    const supabase = createClient(context);
+
+    // Get authenticated user from Supabase (reads from cookies)
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    console.log('User authenticated:', !!user);
+    if (authError) {
+        console.error('Auth error:', authError);
+    }
+
+    // If not authenticated, redirect to login
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    // Get access token from session
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
+    console.log('Access token available:', !!accessToken);
 
     try {
         // Use cache service to fetch spots
@@ -151,7 +185,11 @@ export async function getServerSideProps() {
             const url = `${API_URL}/api/spots`;
             console.log('Fetching from:', url);
 
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             console.log('Response status:', response.status);
 
             if (!response.ok) {
@@ -183,7 +221,7 @@ export async function getServerSideProps() {
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
 
-        // Return empty array on error, but preserve any cached data
+        // Return empty array on error
         return {
             props: {
                 spots: [],

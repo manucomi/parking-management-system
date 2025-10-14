@@ -10,6 +10,7 @@ import {
     unassignedSpots,
 } from '@/data/adminDemo';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/server';
 
 function AdminDashboard() {
     return (
@@ -32,7 +33,10 @@ function AdminDashboard() {
                     date={nextRaffle.date}
                     registeredCount={nextRaffle.registeredCount}
                     cta={
-                        <Link href="/admin/raffle" className={styles["manage-btn"]}>
+                        <Link
+                            href="/admin/raffle"
+                            className={styles['manage-btn']}
+                        >
                             Manage Raffle
                         </Link>
                     }
@@ -41,7 +45,7 @@ function AdminDashboard() {
 
             <section className={styles.tables}>
                 <div className={styles.card}>
-                    <div className={styles["card-head"]}>
+                    <div className={styles['card-head']}>
                         <h3>Recent Allocations</h3>
                     </div>
                     <Table
@@ -53,13 +57,13 @@ function AdminDashboard() {
                         ]}
                         data={recentAllocations}
                     />
-                    <div className={styles["card-foot"]}>
+                    <div className={styles['card-foot']}>
                         <Link href="/admin/residents">View All Residents</Link>
                     </div>
                 </div>
 
                 <div className={styles.card}>
-                    <div className={styles["card-head"]}>
+                    <div className={styles['card-head']}>
                         <h3>Unassigned Spots</h3>
                     </div>
                     <Table
@@ -71,13 +75,45 @@ function AdminDashboard() {
                         ]}
                         data={unassignedSpots}
                     />
-                    <div className={styles["card-foot"]}>
+                    <div className={styles['card-foot']}>
                         <Link href="/admin/spots">Manage Parking Spots</Link>
                     </div>
                 </div>
             </section>
         </div>
     );
+}
+
+// Protect admin dashboard with authentication
+export async function getServerSideProps(context) {
+    // Create Supabase server client with cookie handling
+    const supabase = createClient(context);
+
+    // Get authenticated user from Supabase (reads from cookies)
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    console.log('[Admin Dashboard] User authenticated:', !!user);
+    if (authError) {
+        console.error('[Admin Dashboard] Auth error:', authError);
+    }
+
+    // If not authenticated, redirect to login
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    // User is authenticated, allow access to dashboard
+    return {
+        props: {},
+    };
 }
 
 export default withAdminLayout(AdminDashboard);
