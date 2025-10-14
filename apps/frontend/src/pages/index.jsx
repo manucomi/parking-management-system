@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import FormInput from '@/components/FormInput/FormInput';
 import Button from '@/components/Button/Button';
 import Card from '@/components/Card/Card';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/utils/supabaseClient';
 import styles from './index.module.scss';
 
 export default function Login() {
@@ -14,43 +16,162 @@ export default function Login() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [userRole, setUserRole] = useState('resident');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { user, login, signup } = useAuth();
 
-    const handleLogin = (e) => {
+    // Redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            const userMetadata = user.user_metadata || {};
+            const role = userMetadata.role || 'resident';
+
+            // Redirect based on user role
+            if (role === 'admin') {
+                router.push('/admin');
+            } else {
+                router.push('/resident');
+            }
+        }
+    }, [user, router]);
+
+    const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
         if (!email || !password) {
             setError('Please fill in all fields');
+            setLoading(false);
             return;
         }
 
-        if (userRole === 'admin') {
-            router.push('/admin/');
-        } else {
-            router.push('/resident/');
+        try {
+            const { data, error: loginError } = await login(email, password);
+
+            if (loginError) {
+                // Handle specific error messages
+                let errorMessage = loginError.message || 'Login failed';
+
+                if (
+                    errorMessage.includes('Invalid login credentials') ||
+                    errorMessage.includes('invalid')
+                ) {
+                    errorMessage =
+                        'Invalid email or password. Please check your credentials and try again.';
+                } else if (errorMessage.includes('Email not confirmed')) {
+                    errorMessage =
+                        'Please confirm your email address before logging in.';
+                } else if (errorMessage.includes('Email link is invalid')) {
+                    errorMessage =
+                        'Your login link has expired. Please try logging in again.';
+                }
+
+                setError(errorMessage);
+                setLoading(false);
+                return;
+            }
+
+            // Ensure we have valid user data before proceeding
+            if (!data?.user) {
+                setError(
+                    'Login failed. Unable to retrieve user information. Please try again.',
+                );
+                setLoading(false);
+                return;
+            }
+
+            // Update user metadata with selected role
+            try {
+                await supabase.auth.updateUser({
+                    data: { role: userRole },
+                });
+            } catch (updateError) {
+                console.error('Error updating user metadata:', updateError);
+                // Don't block login if metadata update fails
+            }
+
+            // Redirect based on selected role
+            if (userRole === 'admin') {
+                router.push('/admin');
+            } else {
+                router.push('/resident');
+            }
+        } catch (err) {
+            console.error('Unexpected login error:', err);
+            setError(
+                'An unexpected error occurred. Please check your credentials and try again.',
+            );
+            setLoading(false);
         }
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
         if (!name || !email || !password || !confirmPassword) {
             setError('Please fill in all fields');
+            setLoading(false);
             return;
         }
 
         if (password !== confirmPassword) {
             setError('Passwords do not match');
+            setLoading(false);
             return;
         }
 
-        setActiveTab('login');
-        setEmail('');
-        setPassword('');
-        setName('');
-        setConfirmPassword('');
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const { data, error: signupError } = await signup(email, password, {
+                data: {
+                    full_name: name,
+                    role: 'resident', // New users are residents by default
+                },
+            });
+
+            if (signupError) {
+                // Handle specific error messages
+                let errorMessage = signupError.message || 'Registration failed';
+
+                if (errorMessage.includes('invalid')) {
+                    errorMessage =
+                        'Invalid email address. Please use a real email (e.g., yourname@gmail.com), not test@example.com';
+                } else if (errorMessage.includes('already registered')) {
+                    errorMessage =
+                        'This email is already registered. Please login instead.';
+                }
+
+                setError(errorMessage);
+                setLoading(false);
+                return;
+            }
+
+            // Success - switch to login tab and show message
+            setActiveTab('login');
+            setEmail('');
+            setPassword('');
+            setName('');
+            setConfirmPassword('');
+            setError('');
+            setLoading(false);
+
+            // Show success message
+            alert(
+                'Registration successful! You can now login with your credentials.',
+            );
+        } catch (err) {
+            console.error('Signup error:', err);
+            setError('An unexpected error occurred');
+            setLoading(false);
+        }
     };
 
     return (
@@ -159,8 +280,9 @@ export default function Login() {
                             <Button
                                 type="submit"
                                 className={styles['submit-button']}
+                                disabled={loading}
                             >
-                                Login
+                                {loading ? 'Logging in...' : 'Login'}
                             </Button>
                         </form>
                     ) : (
@@ -208,8 +330,9 @@ export default function Login() {
                                 <Button
                                     type="submit"
                                     className={styles['submit-button']}
+                                    disabled={loading}
                                 >
-                                    Register
+                                    {loading ? 'Registering...' : 'Register'}
                                 </Button>
                             </div>
                         </form>
