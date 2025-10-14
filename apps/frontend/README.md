@@ -108,6 +108,19 @@ npm run test:coverage
 
 ---
 
+## Storybook Integration
+
+The frontend includes full Storybook integration for isolated component development and visual documentation.
+
+- Each component under `src/components/` includes its own `ComponentName.stories.jsx`.
+- Stories follow the CSF3 format with controls and documentation.
+- Storybook runs with:
+    ```bash
+    npm run storybook
+    ```
+
+---
+
 ## Component Library
 
 All UI components are documented in Storybook:

@@ -56,9 +56,30 @@ For the full interactive prototype, visit:
 
 ---
 
+## Storybook Component Catalog
+
+Storybook serves as the live documentation and testing environment for all UI components.  
+Each component includes:
+
+- `.jsx` implementation
+- `.module.scss` styles
+- `.test.jsx` unit tests
+- `.stories.jsx` visual stories
+
+This structure allows developers and designers to validate components in isolation before integration.
+
+---
+
 ## Related Files
 
 - `/docs/architecture/container-diagram.png`
 - `/docs/assets/cover.png`
 - `/docs/assets/figma-ui.png`
 - `/docs/design-doc.md`
+
+---
+
+**Related:**
+
+- [Frontend Architecture](../../FRONTEND_ARCHITECTURE.md)
+- [Design References](./DESIGN-REFERENCES.md)

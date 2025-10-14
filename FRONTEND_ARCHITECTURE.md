@@ -14,6 +14,17 @@ The app uses `getServerSideProps` with `createServerClient` from `@supabase/ssr`
 
 For complete authentication details, see [AUTHENTICATION_GUIDE.md](AUTHENTICATION_GUIDE.md).
 
+## Component Development Workflow
+
+Each UI component is developed, tested, and documented in isolation through Storybook.  
+This promotes visual consistency, accessibility validation, and reusability.
+
+Storybook is configured to:
+
+- Automatically load stories from `src/components/**/*.stories.jsx`
+- Support SCSS Modules for styling consistency
+- Integrate with Chromatic for visual regression testing
+
 ## Documentation Index
 
 ### System Architecture
@@ -39,4 +50,5 @@ For complete authentication details, see [AUTHENTICATION_GUIDE.md](AUTHENTICATIO
 
 - [Authentication Guide](./AUTHENTICATION_GUIDE.md)
 - [Design References](./docs/ui/DESIGN-REFERENCES.md)
+- [UI Overview](./docs/ui/ui-overview.md)
 - [System Architecture](./docs/architecture/system-architecture.md)
