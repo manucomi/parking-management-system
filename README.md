@@ -37,9 +37,10 @@ This system manages parking spot allocation for residential complexes through a 
 - **Frontend:** Next.js 15 + React 19 (SSR for performance)
 - **Backend:** Node.js + Express (REST API)
 - **Database:** PostgreSQL via Supabase
+- **Authentication:** Supabase Auth with JWT
 - **Cache:** Custom SSR cache (future: Redis/Upstash)
 - **Hosting:** Vercel (Frontend) + Render (Backend)
-- **CI/CD:** GitHub Actions → Vercel Deploy Hooks
+- **CI/CD:** GitHub Actions → Vercel + Render
 
 ---
 
@@ -52,6 +53,7 @@ This project emphasizes **documentation-first development** and **architectural 
 ### Core Documentation
 
 - **[Frontend Architecture](./FRONTEND_ARCHITECTURE.md)** — Entry point to all docs
+- **[Authentication Guide](./AUTHENTICATION_GUIDE.md)** — Supabase Auth setup and usage
 - **[System Architecture](./docs/architecture/system-architecture.md)** — C4 diagrams and component breakdown
 - **[Design Document](./docs/design-docs/design-doc.md)** — High-level design decisions
 - **[Architecture Decision Records](./docs/design-docs/adr/)** — Why we made key technical choices
@@ -88,6 +90,16 @@ cd parking-management-system
 
 # Install dependencies
 npm install
+
+# Set up environment variables
+cp apps/frontend/.env.example apps/frontend/.env.local
+cp apps/backend/.env.example apps/backend/.env
+# Edit .env files with your credentials
+
+# Initialize database
+cd apps/backend
+npm run db:init
+cd ../..
 
 # Run development servers
 npm run dev
@@ -184,37 +196,45 @@ See [Changesets Guide](./docs/deployment/changesets-guide.md) and [Delegation Pl
 
 ---
 
-## 📋 Roadmap
+## Roadmap
 
-### ✅ MVP (Current)
+### MVP (Current - Completed)
 
 - [x] Architecture and design documentation
 - [x] Component-based UI structure
-- [x] Basic raffle flow (in progress)
-- [ ] Core API endpoints
-- [ ] Database schema implementation
+- [x] Supabase authentication with SSR
+- [x] Core API endpoints (residents, spots, raffle)
+- [x] Database schema implementation
+- [x] CI/CD pipeline with automated deployments
 
-### 🚧 Phase 2 — Automation & Scale
+### Phase 2 — Testing & Hardening
 
-- [ ] Automated raffle scheduling
+- [ ] Backend unit and integration tests
+- [ ] E2E authentication tests
+- [ ] Rate limiting and API protection
+- [ ] Error monitoring and logging
+
+### Phase 3 — Additional Features
+
+- [ ] Email notifications
+- [ ] Multi-building support in UI
 - [ ] Redis caching layer
-- [ ] Multi-building support
-- [ ] Monitoring and logging
+- [ ] Password reset flow
 
-### 🔮 Phase 3 — AI Integration
+### Phase 4 — AI Integration
 
 - [ ] License Plate Recognition API
 - [ ] Real-time parking status
-- [ ] Notification system
 - [ ] Analytics dashboard
 
 ---
 
-## 🔒 Security & Performance
+## Security & Performance
 
-- **Authentication:** Planned integration with Supabase Auth
-- **Data Protection:** HTTPS, encrypted storage, input validation
-- **Performance:** SSR caching, database indexing, async operations
+- **Authentication:** Supabase Auth with JWT-based API protection
+- **Authorization:** Role-based access control (admin/resident)
+- **Data Protection:** HTTPS, HTTP-only cookies, input validation
+- **Performance:** SSR caching, database indexing, connection pooling
 - **Scalability:** Horizontal scaling ready, cloud-agnostic design
 
 See detailed documentation:
@@ -226,7 +246,7 @@ See detailed documentation:
 
 ## 📄 License
 
-This is a demonstration project created as part of a Senior Engineer promotion assessment.
+This is a demonstration project created as part of a promotion assessment.
 
 ---
 
