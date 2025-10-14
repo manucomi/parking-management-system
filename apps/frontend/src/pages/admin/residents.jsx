@@ -3,9 +3,11 @@ import Table from '@/components/Table/Table';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Pagination from '@/components/Pagination/Pagination';
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
+import { withAuth } from '@/components/withAuth';
 import styles from './residents.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
+import { createClient } from '@/utils/supabase/server';
 
 // Server-side cache service
 const cacheService = new NetworkFirstCacheService({
@@ -135,13 +137,45 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
     );
 }
 
-// SSR with cache: This runs on the server on every request
-export async function getServerSideProps() {
+// SSR with auth: This runs on the server on every request
+// Uses Supabase SSR client to get user session from cookies
+export async function getServerSideProps(context) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     console.log('=== getServerSideProps START ===');
     console.log('API_URL:', API_URL);
-    console.log('Environment:', process.env.NODE_ENV);
+
+    // Create Supabase server client with cookie handling
+    const supabase = createClient(context);
+
+    // Get authenticated user from Supabase (reads from cookies)
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    console.log('User authenticated:', !!user);
+    if (authError) {
+        console.error('Auth error:', authError);
+    }
+
+    // If not authenticated, redirect to login
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    // Get access token from session
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
+    console.log('Access token available:', !!accessToken);
 
     try {
         // Use cache service to fetch residents
@@ -149,13 +183,13 @@ export async function getServerSideProps() {
             const url = `${API_URL}/api/residents`;
             console.log('Fetching from:', url);
 
-            const response = await fetch(url);
+            // Forward auth token to API request
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-            console.log(
-                'Response headers:',
-                Object.fromEntries(response.headers.entries()),
-            );
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -191,13 +225,8 @@ export async function getServerSideProps() {
         console.error('=== ERROR in getServerSideProps ===');
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-        console.error(
-            'Full error:',
-            JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        );
 
-        // Return empty array on error, but preserve any cached data
+        // Return empty array on error
         return {
             props: {
                 residents: [],
