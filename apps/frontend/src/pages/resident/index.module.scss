@@ -32,7 +32,8 @@
     transition: background-color 0.2s;
 
     &:hover {
-        background-color: color.adjust($color-maroon, $lightness: -10%);
+        background-color: $color-maroon;
+        opacity: 0.9;
     }
 }
 
