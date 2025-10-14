@@ -154,7 +154,7 @@ All endpoints require JWT authentication via Authorization header.
 ```bash
 # Frontend (.env.local)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_ANON=your-anon-key
 NEXT_PUBLIC_API_URL=http://localhost:4000
 
 # Backend (.env)

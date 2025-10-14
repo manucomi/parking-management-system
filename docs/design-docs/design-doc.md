@@ -53,8 +53,8 @@ The PMS follows a **three-tier architecture** with strong separation of concerns
   Encapsulates the raffle engine, resident management, and audit trails.
 - **Database:** Supabase (PostgreSQL) with strict relational modeling for consistency.
 - **Cache:**
-    - SSR-level caching via custom `NetworkFirstCacheService`.
-    - Future upgrade path to Redis (Upstash) for distributed, shared cache.
+    - SSR caching (in-memory) for server-side rendered pages.
+    - Future upgrade path: Redis planned for v1.1 for distributed, shared cache.
 - **Hosting:**
     - Frontend: **Vercel** (automatic PR previews).
     - Backend: **Render** (auto-deploy from GitHub).
@@ -91,14 +91,14 @@ The PMS follows a **three-tier architecture** with strong separation of concerns
 
 ## 5. Technology Stack
 
-| Layer              | Technology                                                   | Purpose                            |
-| ------------------ | ------------------------------------------------------------ | ---------------------------------- |
-| **Frontend**       | Next.js 15 + React 19                                        | SSR, routing, component-based UI   |
-| **Backend**        | Node.js + Express                                            | Business logic, API endpoints      |
-| **Database**       | PostgreSQL (Supabase)                                        | Resident & allocation persistence  |
-| **Cache**          | Custom SSR cache (NetworkFirstCacheService) → Redis (future) | Performance                        |
-| **Infrastructure** | Vercel (FE) + Render (BE)                                    | Free-tier deployment & CI/CD       |
-| **Tooling**        | ESLint, Prettier, Turborepo                                  | Code quality and build performance |
+| Layer              | Technology                                       | Purpose                            |
+| ------------------ | ------------------------------------------------ | ---------------------------------- |
+| **Frontend**       | Next.js 15 + React 19                            | SSR, routing, component-based UI   |
+| **Backend**        | Node.js + Express                                | Business logic, API endpoints      |
+| **Database**       | PostgreSQL (Supabase)                            | Resident & allocation persistence  |
+| **Cache**          | SSR caching (in-memory) → Redis planned for v1.1 | Performance                        |
+| **Infrastructure** | Vercel (FE) + Render (BE)                        | Free-tier deployment & CI/CD       |
+| **Tooling**        | ESLint, Prettier, Turborepo                      | Code quality and build performance |
 
 ---
 

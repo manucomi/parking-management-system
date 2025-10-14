@@ -34,8 +34,25 @@ npm install
 
 ### 3. Set up environment variables
 
-- Copy `.env.example` → `.env.local` in both frontend and backend folders.
-- Request Supabase credentials from the Tech Lead.
+**Frontend** (`apps/frontend/.env.local`):
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+**Backend** (`apps/backend/.env`):
+
+```bash
+DATABASE_URL=postgresql://postgres:[password]@[host]:6543/postgres
+PORT=4000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+SUPABASE_JWT_SECRET=your-jwt-secret
+```
+
+Request Supabase credentials from the Tech Lead.
 
 ### 4. Run development servers
 
@@ -125,20 +142,22 @@ docs(ui): update figma reference
 
 - **Frontend:** Deployed via Vercel. Preview builds auto-generated per PR.
 - **Backend:** Deployed via Render; updates triggered automatically on merge.
-- **Database:** Supabase (PostgreSQL).
-- **Cache:** SSR caching via \`NetworkFirstCacheService\`.
+- **Database:** Supabase PostgreSQL with connection pooling.
+- **Cache:** SSR caching (in-memory) for server-side rendered pages.
 
 ---
 
 ## Getting Help
 
-If you’re stuck:
-
-- Check \`/docs/architecture\` for system context.
-- Review ADRs for past decisions.
-- Ask questions in Slack \`#parking-dev\`.
+- Check `/docs/architecture` for system context and architecture diagrams
+- Review ADRs in `/docs/design-docs/adr` for past technical decisions
+- Reference the [System Architecture](../architecture/system-architecture.md) overview
+- See [Frontend Architecture](../../FRONTEND_ARCHITECTURE.md) for UI patterns
 
 ---
 
-**Welcome aboard!**
-You’re now ready to contribute to a fair and scalable parking management system.
+**Related:**
+
+- [Delegation Plan](./delegation-plan.md)
+- [System Architecture](../architecture/system-architecture.md)
+- [Authentication Guide](../../AUTHENTICATION_GUIDE.md)

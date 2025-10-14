@@ -2,7 +2,7 @@
 
 This document outlines how the **Parking Management System** is designed to scale beyond its initial MVP implementation, describing potential future features, architectural evolution, and delegation strategies.
 
-The system’s architecture is intentionally modular — making it easy to extend functionality (e.g., multi-building support, license plate recognition, real-time monitoring) while maintaining simplicity and cost-efficiency in early phases.
+The system's architecture is intentionally modular, making it straightforward to extend functionality (e.g., multi-building support, license plate recognition, real-time monitoring) while maintaining simplicity and cost-efficiency in early phases.
 
 ---
 
@@ -13,9 +13,9 @@ The system’s architecture is intentionally modular — making it easy to exten
 - **Backend Optimizations:**
     - Use database indexes on frequently queried fields (`resident_id`, `building_id`, `allocated_at`).
     - Optimize raffle logic by pre-loading eligible residents in memory and using transactions for atomic fairness updates.
-- **SSR Caching (MVP):**
-    - The Next.js custom `NetworkFirstCacheService` reduces backend load during high-traffic periods.
-    - Future replacement with Redis (Upstash) for distributed caching will support higher concurrency.
+- **SSR Caching (Active):**
+    - Next.js uses SSR caching (in-memory) to reduce backend load during high-traffic periods.
+    - Planned replacement with Redis for v1.1 will support distributed caching and higher concurrency.
 - **Asynchronous Raffle Execution:**
     - Heavy operations (raffle rotations, fairness recalculations) can run in background jobs to prevent blocking API calls.
 
@@ -55,17 +55,18 @@ The system’s architecture is intentionally modular — making it easy to exten
 
 ## Technical Evolution Plan
 
-### Phase 1 — MVP (Current)
+### Phase 1 — MVP (Implemented)
 
 - **Architecture:** Monolithic two-service model (Next.js + Express).
-- **Cache:** Local SSR cache only (`NetworkFirstCacheService`).
+- **Authentication:** Supabase Auth with SSR and JWT verification.
+- **Cache:** SSR caching (in-memory) for server-side rendered pages.
 - **Deployment:** Vercel (frontend) + Render (backend).
-- **Database:** Supabase (PostgreSQL).
-- **Goal:** Validate fairness and raffle rotation logic.
+- **Database:** Supabase PostgreSQL with connection pooling.
+- **Goal:** Validate fairness and raffle rotation logic with production-ready authentication.
 
-### Phase 2 — Scaling & Resilience
+### Phase 2 — Scaling & Resilience (Planned for v1.1)
 
-- **Add Redis Cache** for distributed caching and quicker API responses.
+- **Add Redis Cache** for distributed caching and faster API responses.
 - **Introduce Scheduler Service** (e.g., cron job, AWS Lambda) for automated raffles.
 - **Improve Observability:** Add logging and monitoring tools like Logtail or Datadog.
 
@@ -116,12 +117,12 @@ This project assumes a growing multidisciplinary team. As new features evolve, c
 
 ## Summary
 
-The **Parking Management System** starts as a lightweight monolithic solution but evolves into a scalable, distributed, and event-driven platform.  
-By emphasizing caching, modularity, and separation of concerns, the system remains efficient today — and ready for future complexity tomorrow.
-
-> **In short:** Build simple, scale smart.
+The Parking Management System starts as a lightweight monolithic solution but is designed to evolve into a scalable, distributed, and event-driven platform. By emphasizing caching, modularity, and separation of concerns, the system remains efficient in production while supporting future enhancements.
 
 ---
 
-**Next:**  
-Proceed to [`docs/team/delegation-plan.md`](../team/delegation-plan.md) for a detailed breakdown of roles, task ownership, and onboarding strategy.
+**Related:**
+
+- [Delegation Plan](../team/delegation-plan.md) — Detailed breakdown of roles and task ownership
+- [System Architecture](./system-architecture.md) — Current implementation details
+- [Performance Architecture](./performance.md) — Caching and optimization strategies

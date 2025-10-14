@@ -4,7 +4,7 @@ This document explains how to use Changesets for version management and automate
 
 ---
 
-## 🎯 What are Changesets?
+## What are Changesets?
 
 Changesets are a way to declare which packages have changed and how they've changed since the last release. They help automate:
 
@@ -84,7 +84,7 @@ git commit -m "feat: add pagination to allocation table"
 
 ---
 
-## 📋 Changeset Types
+## Changeset Types
 
 | Type      | Version Bump  | When to Use                        |
 | --------- | ------------- | ---------------------------------- |
@@ -123,7 +123,7 @@ When you merge to `main`:
 
 ---
 
-## 🔧 Available Scripts
+## Available Scripts
 
 | Script          | Command                    | Purpose                  |
 | --------------- | -------------------------- | ------------------------ |
@@ -204,7 +204,7 @@ The workflow requires:
 
 ---
 
-## 🚀 Benefits
+## Benefits
 
 | Benefit          | Description                              |
 | ---------------- | ---------------------------------------- |

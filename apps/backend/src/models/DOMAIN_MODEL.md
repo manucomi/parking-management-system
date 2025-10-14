@@ -4,6 +4,17 @@
 
 This document describes the domain model and relationships between entities in the Parking Management System.
 
+## Authentication Integration
+
+User authentication is managed by **Supabase Auth** with the following integration:
+
+- User accounts stored in Supabase `auth.users` table
+- Additional user metadata in `residents` table linked by email
+- JWT tokens issued by Supabase for API authentication
+- Backend middleware verifies JWT tokens for protected endpoints
+
+---
+
 ## Entities
 
 ### 1. **residents**
@@ -181,3 +192,11 @@ Performance-optimized indexes for common queries:
     - Foreign keys ensure referential integrity
     - CASCADE deletes prevent orphaned records
     - SET NULL on raffle deletion preserves historical data
+
+---
+
+**Related:**
+
+- [System Architecture](../../../../docs/architecture/system-architecture.md)
+- [Component Data Flow](../../../../docs/architecture/component-data-flow.md)
+- [Database Schema SQL](./schema.sql)
