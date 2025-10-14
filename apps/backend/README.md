@@ -227,6 +227,8 @@ JWT_SECRET=your-secret-key
 - `raffle_participants` - Raffle registrations
 - `allocation_history` - Historical assignments
 
+See [Domain Model](./src/models/DOMAIN_MODEL.md) for detailed entity relationships.
+
 ## Deployment to Render
 
 1. Create new Web Service
@@ -235,3 +237,11 @@ JWT_SECRET=your-secret-key
 4. Set start command: `npm start`
 5. Add environment variables
 6. Deploy
+
+---
+
+**Related:**
+
+- [Domain Model](./src/models/DOMAIN_MODEL.md)
+- [System Architecture](../../docs/architecture/system-architecture.md)
+- [Component Data Flow](../../docs/architecture/component-data-flow.md)

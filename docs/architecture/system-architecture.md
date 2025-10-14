@@ -20,7 +20,7 @@ Shows how the system interacts with key external actors and cloud services.
 
 **External Systems**
 
-- **Supabase:** Cloud-hosted PostgreSQL database used for persistence.
+- **Supabase:** Cloud-hosted PostgreSQL database and authentication service.
 - **Render:** Backend hosting (Express API).
 - **Vercel:** Frontend hosting (Next.js).
 
@@ -44,18 +44,20 @@ Defines the major technology containers, their roles, and how they communicate.
 | ------------------------ | ----------------------------- | ----------------------------------------------------------------------------------------- |
 | **Frontend**             | Next.js (React)               | Renders the Resident and Admin dashboards, handles user actions, and manages SSR caching. |
 | **Backend API**          | Node.js + Express             | Exposes REST endpoints for raffle logic, resident management, and allocations.            |
+| **Authentication**       | Supabase Auth                 | Manages user authentication with JWT tokens and role-based access control.                |
 | **Database**             | Supabase (PostgreSQL)         | Stores residents, parking spots, allocation records, and histories.                       |
-| **Cache (SSR)**          | `NetworkFirstCacheService`    | Handles SSR caching of API responses during page generation.                              |
-| **Cache (Future)**       | Redis (Upstash)               | Planned distributed cache for scalability and real-time updates.                          |
+| **Cache (Active)**       | SSR caching (in-memory)       | Handles SSR caching of API responses during page generation.                              |
+| **Cache (Planned)**      | Redis planned for v1.1        | Planned distributed cache for scalability and real-time updates.                          |
 | **Scheduler (Future)**   | Cron or AWS Lambda            | Planned service to automate raffle execution every 3 months.                              |
 | **LPR Service (Future)** | License Plate Recognition API | Future module for real-time vehicle event ingestion.                                      |
 
 **Communication Flow**
 
 1. The **Resident** uses the **Frontend** (Next.js) to register or check status.
-2. The **Frontend** communicates with the **Backend API** (Express) through REST.
-3. The **Backend** reads/writes from **Supabase** and uses **SSR cache** to improve response times.
-4. In the future, **Redis** will centralize caching for multiple replicas.
+2. The **Frontend** communicates with the **Backend API** (Express) through REST with JWT authentication.
+3. The **Backend** reads/writes from **Supabase** and uses **SSR caching (in-memory)** to improve response times.
+4. **Supabase Auth** manages user authentication and JWT token generation.
+5. In the future, **Redis** will centralize caching for multiple replicas.
 
 ---
 
@@ -68,12 +70,13 @@ Explains how internal modules within the Frontend and Backend interact.
 
 ### **Frontend Components**
 
-| Component                    | Description                                    |
-| ---------------------------- | ---------------------------------------------- |
-| **DashboardPage**            | Displays raffle info and resident allocations. |
-| **RaffleRegistration**       | Allows residents to join raffles.              |
-| **NetworkFirstCacheService** | Caches API data during SSR.                    |
-| **ApiClient**                | Fetches backend data via REST endpoints.       |
+| Component              | Description                                    |
+| ---------------------- | ---------------------------------------------- |
+| **DashboardPage**      | Displays raffle info and resident allocations. |
+| **RaffleRegistration** | Allows residents to join raffles.              |
+| **SSR Cache Service**  | Caches API data during SSR (in-memory).        |
+| **ApiClient**          | Fetches backend data via REST endpoints.       |
+| **AuthProvider**       | Manages Supabase Auth state and JWT tokens.    |
 
 ### **Backend Components**
 
@@ -81,6 +84,7 @@ Explains how internal modules within the Frontend and Backend interact.
 | ----------------------------- | -------------------------------------------------------------- |
 | **RaffleController**          | Core business logic for raffle generation and fairness checks. |
 | **ResidentController**        | CRUD operations for residents and their allocation history.    |
+| **AuthMiddleware**            | JWT verification and role-based access control.                |
 | **SchedulerHandler (Future)** | Cron/Job trigger for automated raffles.                        |
 | **LPRController (Future)**    | Endpoint for license plate recognition events.                 |
 
@@ -105,17 +109,17 @@ Shows the main event flow for the raffle process.
 
 ## Performance & Scalability Considerations
 
-- **SSR Cache Layer** — reduces backend calls by caching API data in Next.js during rendering.
+- **SSR caching (in-memory)** — reduces backend calls by caching API data in Next.js during rendering.
 - **Database Indexing** — indexes on `resident_id` and `allocated_at` for quick lookups.
 - **Asynchronous Operations** — raffle runs handled asynchronously to avoid blocking UI.
-- **Future Redis Integration** — migrate SSR cache to shared Redis for distributed scaling.
+- **Redis planned for v1.1** — migrate SSR cache to shared Redis for distributed scaling.
 - **Cloud Flexibility** — current deployment (Vercel + Render) can easily migrate to AWS ECS or Cloud Run.
 
 ---
 
 ## Summary
 
-This architecture balances **simplicity, scalability, and cost-efficiency**.
+This architecture balances simplicity, scalability, and cost-efficiency.
 
 - Lightweight but modular design.
 - Clear scalability path (multi-building, real-time updates).
@@ -124,5 +128,4 @@ This architecture balances **simplicity, scalability, and cost-efficiency**.
 
 ---
 
-**Next:**  
-Proceed to [`scalability-and-future.md`](./scalability-and-future.md) for extended documentation on growth strategy and delegation planning.
+Related: [Scalability Strategy](./scalability-and-future.md) | [Architecture Overview](./architecture-overview.md)

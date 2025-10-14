@@ -32,3 +32,11 @@ For complete authentication details, see [AUTHENTICATION_GUIDE.md](AUTHENTICATIO
 
 - [Project Specification](docs/requirements/project-spec.md)
 - [System Requirements](docs/requirements/requirements.md)
+
+---
+
+**Related:**
+
+- [Authentication Guide](./AUTHENTICATION_GUIDE.md)
+- [Design References](./docs/ui/DESIGN-REFERENCES.md)
+- [System Architecture](./docs/architecture/system-architecture.md)

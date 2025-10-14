@@ -13,8 +13,8 @@ At the same time, we need a roadmap for scaling toward distributed caching when 
 
 We decided to:
 
-1. **Implement an SSR caching layer** in the frontend via a custom utility (`NetworkFirstCacheService`) that caches API responses during server-side rendering.
-2. **Plan a future integration** of **Redis (Upstash)** in the backend once the system requires cross-instance shared caching or live data synchronization.
+1. **Implement an SSR caching layer** in the frontend using SSR caching (in-memory) that stores API responses during server-side rendering.
+2. **Plan a future integration** of **Redis planned for v1.1** in the backend once the system requires cross-instance shared caching or live data synchronization.
 
 ## Consequences
 

@@ -29,7 +29,7 @@ It focuses on **clear ownership**, **delegation of responsibilities**, and **col
 | Raffle execution      | Backend Dev  | Implement `/api/raffle/run`, fairness logic, and persistence. |
 | Allocation tracking   | Backend Dev  | Create `allocations` table and join queries.                  |
 | Dashboard UI          | Frontend Dev | Display raffle results and current status.                    |
-| SSR caching layer     | Frontend Dev | Implement `NetworkFirstCacheService` for API caching.         |
+| SSR caching layer     | Frontend Dev | Implement SSR caching (in-memory) for API responses.          |
 | Deployment pipeline   | DevOps       | Configure Vercel + Render CI/CD.                              |
 
 ---

@@ -46,7 +46,7 @@ JWT_SECRET=your-random-secret-key
 ```bash
 # Copy from Supabase Dashboard → Settings → API
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+NEXT_PUBLIC_SUPABASE_ANON=your-anon-public-key
 NEXT_PUBLIC_API_URL=http://localhost:4000  # or production URL
 ```
 
@@ -290,7 +290,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 1. Add environment variables in Vercel dashboard:
     - `NEXT_PUBLIC_SUPABASE_URL`
-    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+    - `NEXT_PUBLIC_SUPABASE_ANON`
     - `NEXT_PUBLIC_API_URL` (Render backend URL)
 
 2. Redeploy both services after adding environment variables

@@ -8,7 +8,7 @@ Next.js application for managing parking spot allocation through automated raffl
 
 ---
 
-## 🌐 Live Environments
+## Live Environments
 
 | Environment    | URL                                                                                                             | Description                       |
 | -------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------- |
@@ -19,7 +19,7 @@ Next.js application for managing parking spot allocation through automated raffl
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -48,7 +48,7 @@ Required environment variables:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_ANON=your-anon-key
 NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
@@ -68,7 +68,7 @@ See `.env.example` for full configuration.
 
 ---
 
-## 📦 Available Scripts
+## Available Scripts
 
 | Command                 | Description                           |
 | ----------------------- | ------------------------------------- |
@@ -84,7 +84,7 @@ See `.env.example` for full configuration.
 
 ---
 
-## 🧪 Testing
+## Testing
 
 The project maintains **90%+ test coverage** across all components.
 
@@ -108,7 +108,7 @@ npm run test:coverage
 
 ---
 
-## 📚 Component Library
+## Component Library
 
 All UI components are documented in Storybook:
 
@@ -288,3 +288,11 @@ Use this when you don't need to bump the version and trigger a release. This is 
 ```bash
 npm run change:add:empty
 ```
+
+---
+
+**Related:**
+
+- [Frontend Architecture](../../FRONTEND_ARCHITECTURE.md)
+- [Authentication Guide](../../AUTHENTICATION_GUIDE.md)
+- [API Documentation](./src/API_QUICKSTART.md)

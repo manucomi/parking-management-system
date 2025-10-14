@@ -49,7 +49,7 @@ on:
 
 ---
 
-## 📋 Pipeline Jobs
+## Pipeline Jobs
 
 The pipeline consists of **4 sequential jobs**:
 
@@ -170,7 +170,7 @@ frontend: 1.2.3 → 1.3.0
 
 ---
 
-### 4. Deploy (Vercel) 🚀
+### 4. Deploy (Vercel)
 
 **Purpose:** Trigger production deployment.
 
@@ -349,11 +349,11 @@ git push origin feat/add-pagination
 | Improvement                 | Description                                                    | Status                     |
 | --------------------------- | -------------------------------------------------------------- | -------------------------- |
 | **Preview Deployments**     | Automatic preview deployments on each PR for QA validation     | ✅ **Active** (via Vercel) |
-| Parallel CI Jobs            | Split lint/test/build into separate jobs for faster execution  | 📋 Planned                 |
-| Automated Lighthouse Audits | Integrate Lighthouse CI to check performance and accessibility | 📋 Planned                 |
-| Slack Notifications         | Notify team on deploy success or failure                       | 📋 Planned                 |
-| Release Tags                | Auto-create Git tags for each release version                  | 📋 Planned                 |
-| E2E Testing                 | Add Playwright/Cypress tests to CI pipeline                    | 📋 Planned                 |
+| Parallel CI Jobs            | Split lint/test/build into separate jobs for faster execution  | Planned                 |
+| Automated Lighthouse Audits | Integrate Lighthouse CI to check performance and accessibility | Planned                 |
+| Slack Notifications         | Notify team on deploy success or failure                       | Planned                 |
+| Release Tags                | Auto-create Git tags for each release version                  | Planned                 |
+| E2E Testing                 | Add Playwright/Cypress tests to CI pipeline                    | Planned                 |
 
 ---
 

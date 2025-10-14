@@ -189,7 +189,7 @@ See [Changesets Guide](./docs/deployment/changesets-guide.md) and [Delegation Pl
 
 - [x] Architecture and design documentation
 - [x] Component-based UI structure
-- [x] Supabase authentication with SSR
+- [x] Supabase Auth (SSR with JWT verification)
 - [x] Core API endpoints (residents, spots, raffle)
 - [x] Database schema implementation
 - [x] CI/CD pipeline with automated deployments
