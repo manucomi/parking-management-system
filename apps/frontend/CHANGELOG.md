@@ -1,5 +1,11 @@
 # frontend
 
+## 0.4.0
+
+### Minor Changes
+
+- 51daf41: Integrate supabase authentication in backend and frontend
+
 ## 0.3.1
 
 ### Patch Changes
