@@ -9,6 +9,8 @@ REST API for managing parking allocations, residents, and raffle system.
 - Node.js 20+
 - Express.js
 - PostgreSQL (Supabase)
+- Supabase Auth
+- JWT for API authentication
 - pg client
 
 ## Quick Start
@@ -16,6 +18,10 @@ REST API for managing parking allocations, residents, and raffle system.
 ```bash
 # Install dependencies
 npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your Supabase credentials
 
 # Initialize database (creates tables + sample data)
 npm run db:init
@@ -26,14 +32,55 @@ npm run dev
 
 Server will run on http://localhost:4000
 
+## Authentication
+
+All API endpoints (except `/health` and `/auth/*`) require JWT authentication.
+
+### Auth Endpoints
+
+```bash
+# Sign up
+curl -X POST http://localhost:4000/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "John Doe",
+    "role": "admin"
+  }'
+
+# Login
+curl -X POST http://localhost:4000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123"
+  }'
+
+# Logout
+curl -X POST http://localhost:4000/auth/logout \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Protected Endpoints
+
+Include JWT token in Authorization header:
+
+```bash
+curl http://localhost:4000/api/residents \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
 ## Testing the API
 
 ### Health Check
+
 ```bash
 curl http://localhost:4000/health
 ```
 
 ### Residents
+
 ```bash
 # Get all residents
 curl http://localhost:4000/api/residents
@@ -55,6 +102,7 @@ curl -X POST http://localhost:4000/api/residents \
 ```
 
 ### Parking Spots
+
 ```bash
 # Get all spots
 curl http://localhost:4000/api/spots
@@ -74,6 +122,7 @@ curl -X POST http://localhost:4000/api/spots \
 ```
 
 ### Raffle
+
 ```bash
 # Get current raffle
 curl http://localhost:4000/api/raffle/current
@@ -91,6 +140,7 @@ curl http://localhost:4000/api/raffle/results
 ```
 
 ### History
+
 ```bash
 # Get allocation history for resident
 curl http://localhost:4000/api/history/1
@@ -98,27 +148,49 @@ curl http://localhost:4000/api/history/1
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| **Residents** | | |
-| GET | `/api/residents` | List all residents |
-| GET | `/api/residents/:id` | Get resident by ID |
-| POST | `/api/residents` | Create new resident |
-| PUT | `/api/residents/:id` | Update resident |
-| DELETE | `/api/residents/:id` | Delete resident |
-| **Parking Spots** | | |
-| GET | `/api/spots` | List all spots |
-| GET | `/api/spots/:id` | Get spot by ID |
-| POST | `/api/spots` | Create new spot |
-| PATCH | `/api/spots/:id` | Update spot |
-| DELETE | `/api/spots/:id` | Delete spot |
-| **Raffle** | | |
-| GET | `/api/raffle/current` | Get active raffle |
-| POST | `/api/raffle/join` | Join raffle |
-| POST | `/api/raffle/run` | Execute raffle |
-| GET | `/api/raffle/results` | Latest results |
-| **History** | | |
-| GET | `/api/history/:residentId` | Get allocation history |
+### Authentication
+
+| Method | Endpoint        | Description          | Auth Required |
+| ------ | --------------- | -------------------- | ------------- |
+| POST   | `/auth/signup`  | Create user account  | No            |
+| POST   | `/auth/login`   | Login user           | No            |
+| POST   | `/auth/logout`  | Logout user          | Yes           |
+| POST   | `/auth/refresh` | Refresh access token | Yes           |
+
+### Residents
+
+| Method | Endpoint             | Description        | Auth Required |
+| ------ | -------------------- | ------------------ | ------------- |
+| GET    | `/api/residents`     | List all residents | Yes           |
+| GET    | `/api/residents/:id` | Get resident       | Yes           |
+| POST   | `/api/residents`     | Create resident    | Yes (Admin)   |
+| PUT    | `/api/residents/:id` | Update resident    | Yes (Admin)   |
+| DELETE | `/api/residents/:id` | Delete resident    | Yes (Admin)   |
+
+### Parking Spots
+
+| Method | Endpoint         | Description    | Auth Required |
+| ------ | ---------------- | -------------- | ------------- |
+| GET    | `/api/spots`     | List all spots | Yes           |
+| GET    | `/api/spots/:id` | Get spot       | Yes           |
+| POST   | `/api/spots`     | Create spot    | Yes (Admin)   |
+| PATCH  | `/api/spots/:id` | Update spot    | Yes (Admin)   |
+| DELETE | `/api/spots/:id` | Delete spot    | Yes (Admin)   |
+
+### Raffle
+
+| Method | Endpoint              | Description       | Auth Required |
+| ------ | --------------------- | ----------------- | ------------- |
+| GET    | `/api/raffle/current` | Get active raffle | Yes           |
+| POST   | `/api/raffle/join`    | Join raffle       | Yes           |
+| POST   | `/api/raffle/run`     | Execute raffle    | Yes (Admin)   |
+| GET    | `/api/raffle/results` | Latest results    | Yes           |
+
+### History
+
+| Method | Endpoint                   | Description            | Auth Required |
+| ------ | -------------------------- | ---------------------- | ------------- |
+| GET    | `/api/history/:residentId` | Get allocation history | Yes           |
 
 ## Scripts
 
@@ -138,6 +210,13 @@ PORT=4000
 DATABASE_URL=postgresql://postgres.xxx:yyy@aws-0-region.pooler.supabase.com:6543/postgres
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
+
+# Supabase Auth
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# JWT Secret (generate with: openssl rand -base64 32)
+JWT_SECRET=your-secret-key
 ```
 
 ## Database Schema
