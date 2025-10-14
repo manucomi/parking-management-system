@@ -60,6 +60,8 @@
         "packages/*"
     ],
     "dependencies": {
+        "@supabase/ssr": "^0.7.0",
+        "@supabase/supabase-js": "^2.75.0",
         "lucide-react": "^0.545.0"
     }
 }

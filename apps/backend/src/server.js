@@ -5,8 +5,10 @@ import residentRoutes from './routes/residentRoutes.js';
 import spotRoutes from './routes/spotRoutes.js';
 import raffleRoutes from './routes/raffleRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
+import { verifyToken } from './middleware/authMiddleware.js';
 import pool from './config/database.js';
 
 dotenv.config();
@@ -79,10 +81,14 @@ app.get('/api/debug/db', async (req, res) => {
     }
 });
 
-app.use('/api/residents', residentRoutes);
-app.use('/api/spots', spotRoutes);
-app.use('/api/raffle', raffleRoutes);
-app.use('/api/history', historyRoutes);
+// Public routes (no authentication required)
+app.use('/api/auth', authRoutes);
+
+// Protected routes (require authentication)
+app.use('/api/residents', verifyToken, residentRoutes);
+app.use('/api/spots', verifyToken, spotRoutes);
+app.use('/api/raffle', verifyToken, raffleRoutes);
+app.use('/api/history', verifyToken, historyRoutes);
 
 app.use(errorHandler);
 
