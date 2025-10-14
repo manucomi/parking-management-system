@@ -1,7 +1,12 @@
 # System Architecture Overview
 
-The **Parking Management System** is designed as a modular, scalable web application that ensures fair and automated parking spot allocations within a residential complex.  
-It follows a **three-tier architecture** with clear separation of concerns between presentation, application logic, and data persistence.
+The Parking Management System is designed as a modular, scalable web application that ensures fair and automated parking spot allocations within a residential complex. It follows a three-tier architecture with clear separation of concerns between presentation, application logic, and data persistence.
+
+## Architecture Flow
+
+```
+User → Vercel (Next.js SSR) → Render (Express API) → Supabase (PostgreSQL + Auth)
+```
 
 ---
 
@@ -19,14 +24,15 @@ It follows a **three-tier architecture** with clear separation of concerns betwe
 
 ## System Layers
 
-| Layer                 | Technology                          | Purpose                                                                |
-| --------------------- | ----------------------------------- | ---------------------------------------------------------------------- |
-| **Frontend**          | Next.js (React)                     | Provides user interfaces for Residents and Admins.                     |
-| **Backend API**       | Node.js with Express                | Handles raffle logic, resident management, and fairness rotation.      |
-| **Database**          | PostgreSQL (Supabase)               | Stores residents, parking spots, allocations, and historical records.  |
-| **Cache (SSR Level)** | `NetworkFirstCacheService` (custom) | Caches API responses during SSR to improve page performance.           |
-| **Cache (Future)**    | Redis (Upstash)                     | Planned distributed cache layer for high-volume, real-time operations. |
-| **Hosting**           | Vercel + Render                     | Enables automatic deployments and PR-based preview environments.       |
+| Layer               | Technology               | Purpose                                                                |
+| ------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| **Frontend**        | Next.js (React) with SSR | Provides user interfaces for Residents and Admins with authentication. |
+| **Backend API**     | Node.js with Express     | Handles raffle logic, resident management, and JWT verification.       |
+| **Authentication**  | Supabase Auth            | Email/password authentication with SSR support and JWT tokens.         |
+| **Database**        | PostgreSQL (Supabase)    | Stores residents, parking spots, allocations, and historical records.  |
+| **Cache (Active)**  | Next.js SSR caching      | In-memory caching during server-side rendering.                        |
+| **Cache (Planned)** | Redis (Upstash)          | Distributed cache layer planned for v1.1.                              |
+| **Hosting**         | Vercel + Render          | Automatic deployments with PR-based preview environments.              |
 
 ---
 
@@ -52,15 +58,17 @@ Illustrates internal structures — how Next.js components, hooks, and API endpo
 ![Raffle Sequence Diagram](./sequence-diagram.png)  
 Depicts the interaction between system components during a raffle cycle, from user registration to allocation update.
 
+Related: [Security](security.md) | [Performance](performance.md)
+
 ---
 
 ## Architectural Principles
 
-1. **Separation of Concerns** — Each layer (frontend, backend, DB) has clear responsibilities.
-2. **Simplicity and Cost-efficiency** — Deployments use free-tier platforms to balance scalability and affordability.
-3. **Transparency in Allocation** — All raffle results and histories are persisted for auditability.
-4. **Extendability** — Modular architecture supports new features (e.g., license plate detection).
-5. **Performance via SSR Caching** — The Next.js frontend includes a custom `NetworkFirstCacheService` that caches API data during server-side rendering, improving performance without additional infrastructure.
+1. **Separation of Concerns** - Each layer (frontend, backend, database) has clear responsibilities.
+2. **Simplicity and Cost-efficiency** - Deployments use free-tier platforms to balance scalability and affordability.
+3. **Transparency in Allocation** - All raffle results and histories are persisted for auditability.
+4. **Extendability** - Modular architecture supports new features (e.g., license plate detection).
+5. **Performance via SSR Caching** - SSR caching active in Next.js with in-memory strategy. Redis integration planned for v1.1.
 
 ---
 

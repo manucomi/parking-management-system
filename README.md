@@ -1,35 +1,30 @@
 # Parking Management System
 
-A scalable web platform for fair parking spot allocation in residential units, featuring automated raffle-based assignments, allocation history tracking, and a foundation for AI-powered expansions.
+Scalable web platform for parking spot allocation with automated raffle-based assignments. Authentication implemented using Supabase Auth (SSR + JWT verification).
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://parking-management-system-frontend-rho.vercel.app/)
 [![CI/CD](https://img.shields.io/badge/CI/CD-GitHub_Actions-blue?style=for-the-badge&logo=githubactions)](https://github.com/manucomi/parking-management-system/actions)
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
-This system manages parking spot allocation for residential complexes through a transparent, automated raffle process that rotates assignments every three months. The architecture is designed with scalability in mind, laying the groundwork for future features like license plate recognition and multi-building support.
+This system manages parking spot allocation for residential complexes through a transparent, automated raffle process. The architecture demonstrates scalability patterns and production-ready authentication.
 
 **Key Features:**
 
-- 🎲 Fair raffle-based parking allocation
-- 📊 Transparent allocation history tracking
-- 👥 Separate interfaces for residents and administrators
-- 🔄 3-month rotation cycles
-- 🚀 Designed for future AI integration (LPR)
+- Fair raffle-based parking allocation
+- Transparent allocation history tracking
+- Role-based access control (admin/resident)
+- Automated deployment pipeline
+- Foundation for AI integration (LPR)
 
 ---
 
-## 🏗️ Architecture at a Glance
+## Architecture at a Glance
 
 ```
-┌─────────────┐      ┌─────────────┐      ┌──────────────┐
-│   Next.js   │─────▶│  Express    │─────▶│  PostgreSQL  │
-│  (Frontend) │      │  (Backend)  │      │  (Supabase)  │
-└─────────────┘      └─────────────┘      └──────────────┘
-     │                      │
-     └──────────────────────┴─────────▶ SSR Cache Layer
+User → Vercel (Next.js SSR) → Render (Express API) → Supabase (PostgreSQL + Auth)
 ```
 
 **Tech Stack:**
@@ -44,36 +39,28 @@ This system manages parking spot allocation for residential complexes through a 
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-This project emphasizes **documentation-first development** and **architectural thinking**. Documentation has been scoped to demonstrate senior-level understanding within assessment timeframe constraints.
-
-> 💡 **Note on Documentation Depth:** Given the take-home assessment timeline (~1 week), documentation focuses on demonstrating architectural thinking and coverage of key concerns. Production implementation would expand on testing strategies, detailed incident response procedures, and comprehensive API documentation.
+This project emphasizes documentation-first development and architectural thinking.
 
 ### Core Documentation
 
-- **[Frontend Architecture](./FRONTEND_ARCHITECTURE.md)** — Entry point to all docs
-- **[Authentication Guide](./AUTHENTICATION_GUIDE.md)** — Supabase Auth setup and usage
-- **[System Architecture](./docs/architecture/system-architecture.md)** — C4 diagrams and component breakdown
-- **[Design Document](./docs/design-docs/design-doc.md)** — High-level design decisions
-- **[Architecture Decision Records](./docs/design-docs/adr/)** — Why we made key technical choices
+- [Architecture Overview](docs/architecture/architecture-overview.md) - System design and patterns
+- [Authentication Guide](AUTHENTICATION_GUIDE.md) - Supabase Auth implementation
+- [Security](docs/architecture/security.md) - Security controls and strategy
+- [Performance](docs/architecture/performance.md) - Optimization and caching
+- [Frontend Architecture](FRONTEND_ARCHITECTURE.md) - Frontend patterns and structure
 
-### Planning & Strategy
+### Additional Resources
 
-- **[Requirements](./docs/requirements/requirements.md)** — Functional and non-functional requirements
-- **[Delegation Plan](./docs/team/delegation-plan.md)** — How to structure team collaboration
-- **[Onboarding Guide](./docs/team/onboarding-guide.md)** — Get new developers up to speed
-- **[Scalability Strategy](./docs/architecture/scalability-and-future.md)** — Growth and evolution path
-
-### Technical Deep-Dives
-
-- **[Security Strategy](./docs/architecture/security.md)** — Auth, data protection, and threat mitigation
-- **[Performance Considerations](./docs/architecture/performance.md)** — Caching, indexing, and optimization
-- **[Domain Model](./docs/architecture/domain-model.md)** — Data relationships and business logic
+- [Requirements](docs/requirements/requirements.md) - Functional and non-functional requirements
+- [Delegation Plan](docs/team/delegation-plan.md) - Team collaboration structure
+- [Onboarding Guide](docs/team/onboarding-guide.md) - Developer setup guide
+- [Domain Model](docs/architecture/domain-model.md) - Data relationships and business logic
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -244,19 +231,10 @@ See detailed documentation:
 
 ---
 
-## 📄 License
+## Project Status
 
-This is a demonstration project created as part of a promotion assessment.
+- Authentication implemented
+- Backend tests pending
+- Ready for production hardening
 
----
-
-## 🙋 About This Project
-
-This project was created as part of a **promotion assessment**, with emphasis on:
-
-- Architectural design and system thinking
-- Documentation and communication
-- Scalability and performance considerations
-- Team collaboration and delegation strategies
-
-For a complete assessment overview, see [ASSESSMENT_SUMMARY.md](./ASSESSMENT_SUMMARY.md).
+See [ASSESSMENT_SUMMARY.md](ASSESSMENT_SUMMARY.md) for complete details.

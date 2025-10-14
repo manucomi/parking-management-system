@@ -1,32 +1,34 @@
-# Frontend Architecture Documentation
+# Frontend Architecture
 
-This document acts as an entry point for all design, architecture, and implementation documentation of the **Parking Management System**.
+Entry point for frontend design, architecture, and implementation documentation.
 
----
+## SSR Implementation
 
-## 📘 Documentation Index
+The app uses `getServerSideProps` with `createServerClient` from `@supabase/ssr` for server-side authentication and data fetching. This ensures authenticated sessions are verified before rendering protected pages.
 
-### 🧭 System Architecture
+## Authentication Hooks
 
-- [System Context Diagram](./docs/architecture/system-context-diagram.png)
-- [Container Diagram](./docs/architecture/container-diagram.png)
-- [Component Diagram](./docs/architecture/component-diagram.jpeg)
-- [Domain Model](./docs/architecture/domain-model.md)
+- `useAuth.js`: Handles login, signup, logout operations
+- Middleware automatically refreshes tokens on each request
+- SSR client validates sessions in `getServerSideProps`
 
-### 🎨 User Interface & Design
+For complete authentication details, see [AUTHENTICATION_GUIDE.md](AUTHENTICATION_GUIDE.md).
 
-- [UI Overview](./docs/ui/ui-overview.md)
-- [Figma Mockups](./docs/ui/assets/figma-ui.png)
+## Documentation Index
 
-### 🧩 Design Decisions
+### System Architecture
 
-- [Main Design Document](./docs/design-docs/design-doc.md)
-- [Architecture Decision Records (ADRs)](./docs/design-docs/adr/)
-    - [0001 - Database Choice](./docs/design-docs/adr/0001-database-choice.md)
-    - [0002 - Frontend Framework](./docs/design-docs/adr/0002-frontend-framework.md)
-    - [0003 - Backend Architecture](./docs/design-docs/adr/0003-backend-architecture.md)
+- [Architecture Overview](docs/architecture/architecture-overview.md)
+- [Domain Model](docs/architecture/domain-model.md)
+- [Security](docs/architecture/security.md)
+- [Performance](docs/architecture/performance.md)
 
-### 📜 Requirements & Specifications
+### Design Decisions
 
-- [Project Specification](./docs/requirements/project-spec.md)
-- [System Requirements](./docs/requirements/requirements.md)
+- [Design Document](docs/design-docs/design-doc.md)
+- [Architecture Decision Records](docs/design-docs/adr/)
+
+### Requirements
+
+- [Project Specification](docs/requirements/project-spec.md)
+- [System Requirements](docs/requirements/requirements.md)
