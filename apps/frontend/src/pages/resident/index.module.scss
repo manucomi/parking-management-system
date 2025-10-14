@@ -1,0 +1,88 @@
+@use "@/scss/variables" as *;
+
+.container {
+    background-color: $color-background;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.header {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+
+    h1 {
+        color: $color-text-primary;
+        font-size: 2rem;
+        margin: 0;
+    }
+}
+
+.logout-btn {
+    background-color: $color-maroon;
+    border: 0;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: color.adjust($color-maroon, $lightness: -10%);
+    }
+}
+
+.main {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.welcome {
+    background-color: #fff;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+    padding: 2rem;
+
+    h2 {
+        color: $color-text-primary;
+        margin: 0 0 0.5rem;
+    }
+
+    p {
+        color: $color-text-secondary;
+        margin: 0;
+    }
+}
+
+.sections {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 1.5rem;
+
+    h3 {
+        color: $color-text-primary;
+        font-size: 1.25rem;
+        margin: 0 0 0.5rem;
+    }
+
+    p {
+        color: $color-text-secondary;
+        margin: 0.5rem 0;
+    }
+}
+
+.coming-soon {
+    color: $color-warning !important;
+    font-style: italic;
+    margin-top: 1rem !important;
+}
