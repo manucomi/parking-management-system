@@ -9,16 +9,14 @@ import { createBrowserClient } from '@supabase/ssr';
 
 // Environment variables (set in Vercel dashboard for production)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON || '';
 
 if (!supabaseUrl) {
     console.warn('⚠️ Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
 if (!supabaseAnonKey) {
-    console.warn(
-        '⚠️ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable',
-    );
+    console.warn('⚠️ Missing NEXT_PUBLIC_SUPABASE_ANON environment variable');
 }
 
 /**
