@@ -193,28 +193,43 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/residents`;
             console.log('Fetching from:', url);
 
-            // Forward auth token to API request
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-            console.log('Response status:', response.status);
+            try {
+                // Forward auth token to API request
+                const response = await fetch(url, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                console.log('Response status:', response.status);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Response error body:', errorText);
-                throw new Error(
-                    `HTTP error! status: ${response.status}, body: ${errorText}`,
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response error body:', errorText);
+                    
+                    // For 5xx errors, throw to trigger cache fallback
+                    if (response.status >= 500) {
+                        throw new Error(
+                            `Backend error (${response.status}): Server might be waking up`,
+                        );
+                    }
+                    
+                    // For 4xx errors, throw with details
+                    throw new Error(
+                        `HTTP error! status: ${response.status}, body: ${errorText}`,
+                    );
+                }
+
+                const data = await response.json();
+                console.log(
+                    'Response data:',
+                    JSON.stringify(data).substring(0, 200),
                 );
+                return data;
+            } catch (fetchError) {
+                // Log but re-throw to let cache service handle it
+                console.error('Fetch error:', fetchError.message);
+                throw fetchError;
             }
-
-            const data = await response.json();
-            console.log(
-                'Response data:',
-                JSON.stringify(data).substring(0, 200),
-            );
-            return data;
         };
 
         // Wrap the fetch with cache (network-first strategy)
@@ -240,7 +255,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 residents: null,
-                error: error.message || 'Failed to load residents',
+                error: null, // Don't pass error to avoid showing error message, let client handle it
             },
         };
     } finally {

@@ -367,20 +367,37 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/raffle/current`;
             console.log('[Raffle SSR] Fetching current raffle from:', url);
 
-            const response = await fetch(url, { headers: authHeaders });
-            console.log('[Raffle SSR] Response status:', response.status);
+            try {
+                const response = await fetch(url, { headers: authHeaders });
+                console.log('[Raffle SSR] Response status:', response.status);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('[Raffle SSR] Response error body:', errorText);
-                throw new Error(
-                    `HTTP error! status: ${response.status}, body: ${errorText}`,
-                );
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(
+                        '[Raffle SSR] Response error body:',
+                        errorText,
+                    );
+
+                    // For 5xx errors, throw to trigger cache fallback
+                    if (response.status >= 500) {
+                        throw new Error(
+                            `Backend error (${response.status}): Server might be waking up`,
+                        );
+                    }
+
+                    // For 4xx errors, throw with details
+                    throw new Error(
+                        `HTTP error! status: ${response.status}, body: ${errorText}`,
+                    );
+                }
+
+                const data = await response.json();
+                console.log('[Raffle SSR] Current raffle data:', data);
+                return data;
+            } catch (fetchError) {
+                console.error('[Raffle SSR] Fetch error:', fetchError.message);
+                throw fetchError;
             }
-
-            const data = await response.json();
-            console.log('[Raffle SSR] Current raffle data:', data);
-            return data;
         };
 
         const currentRaffleData = await cacheService.wrap(
@@ -400,19 +417,37 @@ export async function getServerSideProps(context) {
                         url,
                     );
 
-                    const response = await fetch(url, { headers: authHeaders });
-                    if (!response.ok) {
-                        throw new Error(
-                            `HTTP error! status: ${response.status}`,
-                        );
-                    }
+                    try {
+                        const response = await fetch(url, {
+                            headers: authHeaders,
+                        });
 
-                    const data = await response.json();
-                    console.log(
-                        '[Raffle SSR] Participants count:',
-                        data?.data?.length,
-                    );
-                    return data;
+                        if (!response.ok) {
+                            // For 5xx errors, throw to trigger cache fallback
+                            if (response.status >= 500) {
+                                throw new Error(
+                                    `Backend error (${response.status}): Server might be waking up`,
+                                );
+                            }
+
+                            throw new Error(
+                                `HTTP error! status: ${response.status}`,
+                            );
+                        }
+
+                        const data = await response.json();
+                        console.log(
+                            '[Raffle SSR] Participants count:',
+                            data?.data?.length,
+                        );
+                        return data;
+                    } catch (fetchError) {
+                        console.error(
+                            '[Raffle SSR] Participants fetch error:',
+                            fetchError.message,
+                        );
+                        throw fetchError;
+                    }
                 };
 
                 const participantsData = await cacheService.wrap(
@@ -444,14 +479,30 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/raffle/all`;
             console.log('[Raffle SSR] Fetching all raffles from:', url);
 
-            const response = await fetch(url, { headers: authHeaders });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            try {
+                const response = await fetch(url, { headers: authHeaders });
 
-            const data = await response.json();
-            console.log('[Raffle SSR] Total raffles:', data?.data?.length);
-            return data;
+                if (!response.ok) {
+                    // For 5xx errors, throw to trigger cache fallback
+                    if (response.status >= 500) {
+                        throw new Error(
+                            `Backend error (${response.status}): Server might be waking up`,
+                        );
+                    }
+
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('[Raffle SSR] Total raffles:', data?.data?.length);
+                return data;
+            } catch (fetchError) {
+                console.error(
+                    '[Raffle SSR] All raffles fetch error:',
+                    fetchError.message,
+                );
+                throw fetchError;
+            }
         };
 
         const allRafflesData = await cacheService.wrap(
@@ -496,7 +547,7 @@ export async function getServerSideProps(context) {
                 currentRaffle: null,
                 registeredResidents: null,
                 previousRaffles: null,
-                error: error.message || 'Failed to load raffle data',
+                error: null, // Don't pass error to avoid showing error message, let client handle it
             },
         };
     } finally {
