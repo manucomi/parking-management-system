@@ -16,11 +16,16 @@ describe('NetworkFirstCacheService', () => {
             timeout: 1000,
             logCacheOperations: true,
         });
+
+        // Clear the global cache before each test
+        service.clearCache();
     });
 
     afterEach(() => {
         jest.clearAllMocks();
         jest.clearAllTimers();
+        // Clear global cache after each test
+        service.clearCache();
     });
 
     describe('constructor', () => {
@@ -29,7 +34,6 @@ describe('NetworkFirstCacheService', () => {
             const stats = defaultService.getCacheStats();
 
             expect(stats.timeout).toBe(5000);
-            expect(stats.size).toBe(0);
         });
 
         it('should initialize with custom options', () => {
@@ -47,6 +51,26 @@ describe('NetworkFirstCacheService', () => {
             const defaultService = new NetworkFirstCacheService();
             expect(defaultService.logger).toBe(console);
         });
+
+        it('should share global cache across all instances', () => {
+            const service1 = new NetworkFirstCacheService();
+            const service2 = new NetworkFirstCacheService();
+
+            // Set data in service1
+            service1.cache.set('sharedKey', { id: 1, name: 'shared' });
+
+            // Verify service2 can access the same data
+            expect(service2.cache.get('sharedKey')).toEqual({
+                id: 1,
+                name: 'shared',
+            });
+
+            // Both services reference the same cache instance
+            expect(service1.cache).toBe(service2.cache);
+
+            // Clean up
+            service1.clearCache();
+        });
     });
 
     describe('wrap()', () => {
@@ -61,7 +85,7 @@ describe('NetworkFirstCacheService', () => {
             expect(service.cache.get('testKey')).toEqual(mockData);
             expect(mockLogger.info).toHaveBeenCalledWith(
                 'Cache updated with fresh data',
-                { key: 'testKey' }
+                { key: 'testKey' },
             );
         });
 
@@ -80,11 +104,11 @@ describe('NetworkFirstCacheService', () => {
             expect(asyncFunction).toHaveBeenCalledTimes(1);
             expect(mockLogger.warn).toHaveBeenCalledWith(
                 'Network request failed, checking cache',
-                { key: 'testKey', error: 'Network failed' }
+                { key: 'testKey', error: 'Network failed' },
             );
             expect(mockLogger.info).toHaveBeenCalledWith(
                 'Returning cached data',
-                { key: 'testKey' }
+                { key: 'testKey' },
             );
         });
 
@@ -93,13 +117,13 @@ describe('NetworkFirstCacheService', () => {
             const asyncFunction = jest.fn().mockRejectedValue(networkError);
 
             await expect(
-                service.wrap('testKey', asyncFunction)
+                service.wrap('testKey', asyncFunction),
             ).rejects.toThrow('Network failed');
 
             expect(asyncFunction).toHaveBeenCalledTimes(1);
             expect(mockLogger.warn).toHaveBeenCalledWith(
                 'Network request failed, checking cache',
-                { key: 'testKey', error: 'Network failed' }
+                { key: 'testKey', error: 'Network failed' },
             );
         });
 
@@ -118,13 +142,20 @@ describe('NetworkFirstCacheService', () => {
             expect(service.cache.get('testKey')).toEqual(networkData);
             expect(mockLogger.info).toHaveBeenCalledWith(
                 'Cache updated with fresh data',
-                { key: 'testKey' }
+                { key: 'testKey' },
             );
         });
 
         it('should not log when logCacheOperations is false', async () => {
+            // Create a fresh mock logger for this test
+            const silentMockLogger = {
+                info: jest.fn(),
+                warn: jest.fn(),
+                error: jest.fn(),
+            };
+
             const silentService = new NetworkFirstCacheService({
-                logger: mockLogger,
+                logger: silentMockLogger,
                 logCacheOperations: false,
             });
 
@@ -133,8 +164,9 @@ describe('NetworkFirstCacheService', () => {
 
             await silentService.wrap('testKey', asyncFunction);
 
-            expect(mockLogger.info).not.toHaveBeenCalled();
-            expect(mockLogger.warn).not.toHaveBeenCalled();
+            // Only check the logger passed to this specific service
+            expect(silentMockLogger.info).not.toHaveBeenCalled();
+            expect(silentMockLogger.warn).not.toHaveBeenCalled();
         });
     });
 
@@ -166,7 +198,7 @@ describe('NetworkFirstCacheService', () => {
                 () =>
                     new Promise((resolve) => {
                         setTimeout(() => resolve('slow result'), 2000);
-                    })
+                    }),
             );
 
             const promise = service.executeWithTimeout(slowFunction);
@@ -175,7 +207,7 @@ describe('NetworkFirstCacheService', () => {
             jest.advanceTimersByTime(1001);
 
             await expect(promise).rejects.toThrow(
-                'Operation timed out after 1000ms'
+                'Operation timed out after 1000ms',
             );
 
             const error = await promise.catch((e) => e);
@@ -220,14 +252,22 @@ describe('NetworkFirstCacheService', () => {
         });
 
         it('should not log when logCacheOperations is false', () => {
+            // Create a fresh mock logger for this test
+            const silentMockLogger = {
+                info: jest.fn(),
+                warn: jest.fn(),
+                error: jest.fn(),
+            };
+
             const silentService = new NetworkFirstCacheService({
-                logger: mockLogger,
+                logger: silentMockLogger,
                 logCacheOperations: false,
             });
 
             silentService.clearCache();
 
-            expect(mockLogger.info).not.toHaveBeenCalled();
+            // Only check the logger passed to this specific service
+            expect(silentMockLogger.info).not.toHaveBeenCalled();
         });
     });
 
@@ -301,7 +341,7 @@ describe('NetworkFirstCacheService', () => {
                 () =>
                     new Promise((resolve) => {
                         setTimeout(() => resolve(networkData), 2000);
-                    })
+                    }),
             );
 
             const timeoutPromise = service.wrap('testKey', slowFunction);

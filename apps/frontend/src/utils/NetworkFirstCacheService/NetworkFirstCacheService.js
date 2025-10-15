@@ -1,9 +1,17 @@
 import SimpleCache from './SimpleCache';
 
 /**
+ * Global cache shared across all instances (for SSR persistence within same serverless function)
+ */
+const globalCache = new SimpleCache();
+
+/**
  * A simple network-first cache utility that can wrap any async function.
  * Caches successful responses forever until replaced by newer successful responses.
  * Only updates cache when requests are successful and complete within the timeout.
+ *
+ * Uses a global cache shared across instances to persist data between SSR requests
+ * when running on the same serverless function instance.
  *
  * ⚠️  MEMORY USAGE WARNING: The cache stores a maximum of 100 items with unique keys.
  * When this limit is exceeded, the least recently used items are automatically evicted.
@@ -11,7 +19,7 @@ import SimpleCache from './SimpleCache';
  */
 export default class NetworkFirstCacheService {
     constructor(options = {}) {
-        this.cache = new SimpleCache();
+        this.cache = globalCache; // Use shared global cache
         this.logger = options.logger || console;
         this.timeout = options.timeout || 5000;
         this.logCacheOperations =
@@ -81,7 +89,7 @@ export default class NetworkFirstCacheService {
         return new Promise((resolve, reject) => {
             const timeoutId = setTimeout(() => {
                 const error = new Error(
-                    `Operation timed out after ${this.timeout}ms`
+                    `Operation timed out after ${this.timeout}ms`,
                 );
                 error.name = 'TimeoutError';
                 reject(error);

@@ -6,22 +6,50 @@ import { useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 import { runRaffle } from '@/services/RaffleService/RaffleService';
 import { createClient } from '@/utils/supabase/server';
+import useResilientData from '@/hooks/useResilientData';
+import fetcher from '@/utils/fetcher';
 
 function RafflePage({
-    currentRaffle,
-    registeredResidents,
-    previousRaffles,
+    currentRaffle: initialCurrentRaffle,
+    registeredResidents: initialRegisteredResidents,
+    previousRaffles: initialPreviousRaffles,
     error: serverError,
 }) {
     const [openRun, setOpenRun] = useState(false);
     const [openResults, setOpenResults] = useState(false);
     const [selectedRaffle, setSelectedRaffle] = useState(null);
     const [isExecuting, setIsExecuting] = useState(false);
-    const [error, setError] = useState(serverError);
+
+    // Use resilient data hook for raffle data
+    const {
+        data: raffleData,
+        isLoading,
+        error,
+    } = useResilientData({
+        initialData: {
+            currentRaffle: initialCurrentRaffle,
+            registeredResidents: initialRegisteredResidents,
+            previousRaffles: initialPreviousRaffles,
+        },
+        cacheKey: 'raffle-data',
+        fetchFn: async ({ signal }) => {
+            const response = await fetcher('/api/raffle/current', { signal });
+            return {
+                currentRaffle: response.data?.raffle || null,
+                registeredResidents: response.data?.participants || [],
+                previousRaffles: response.data?.history || [],
+            };
+        },
+        timeout: 5000,
+        cacheTTL: 5 * 60 * 1000, // 5 minutes
+    });
+
+    const currentRaffle = raffleData?.currentRaffle || null;
+    const registeredResidents = raffleData?.registeredResidents || [];
+    const previousRaffles = raffleData?.previousRaffles || [];
 
     const handleRunRaffle = async () => {
         setIsExecuting(true);
-        setError(null);
 
         try {
             const response = await runRaffle();
@@ -29,12 +57,9 @@ function RafflePage({
             if (response.success) {
                 // Reload the page to show updated data
                 window.location.reload();
-            } else {
-                setError('Failed to run raffle');
             }
         } catch (err) {
             console.error('Error running raffle:', err);
-            setError(err.message || 'Failed to run raffle');
         } finally {
             setIsExecuting(false);
             setOpenRun(false);
@@ -52,17 +77,6 @@ function RafflePage({
               ),
           )
         : 0;
-
-    if (error) {
-        return (
-            <div className={styles.content}>
-                <div className={styles.error}>
-                    <h2>Error loading raffle data</h2>
-                    <p>{error}</p>
-                </div>
-            </div>
-        );
-    }
 
     const formatDate = (dateString) => {
         if (!dateString) return 'Not scheduled';
@@ -147,6 +161,8 @@ function RafflePage({
                                 },
                             ]}
                             data={registeredResidents || []}
+                            isLoading={isLoading && !registeredResidents.length}
+                            error={error}
                             renderRow={(row, i) => (
                                 <tr key={i}>
                                     <td>
@@ -189,6 +205,8 @@ function RafflePage({
                                 { header: '', key: 'actions' },
                             ]}
                             data={previousRaffles || []}
+                            isLoading={isLoading && !previousRaffles.length}
+                            error={error}
                             renderRow={(row, i) => (
                                 <tr key={i}>
                                     <td>{formatDate(row.date)}</td>
@@ -349,20 +367,37 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/raffle/current`;
             console.log('[Raffle SSR] Fetching current raffle from:', url);
 
-            const response = await fetch(url, { headers: authHeaders });
-            console.log('[Raffle SSR] Response status:', response.status);
+            try {
+                const response = await fetch(url, { headers: authHeaders });
+                console.log('[Raffle SSR] Response status:', response.status);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('[Raffle SSR] Response error body:', errorText);
-                throw new Error(
-                    `HTTP error! status: ${response.status}, body: ${errorText}`,
-                );
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(
+                        '[Raffle SSR] Response error body:',
+                        errorText,
+                    );
+
+                    // For 5xx errors, throw to trigger cache fallback
+                    if (response.status >= 500) {
+                        throw new Error(
+                            `Backend error (${response.status}): Server might be waking up`,
+                        );
+                    }
+
+                    // For 4xx errors, throw with details
+                    throw new Error(
+                        `HTTP error! status: ${response.status}, body: ${errorText}`,
+                    );
+                }
+
+                const data = await response.json();
+                console.log('[Raffle SSR] Current raffle data:', data);
+                return data;
+            } catch (fetchError) {
+                console.error('[Raffle SSR] Fetch error:', fetchError.message);
+                throw fetchError;
             }
-
-            const data = await response.json();
-            console.log('[Raffle SSR] Current raffle data:', data);
-            return data;
         };
 
         const currentRaffleData = await cacheService.wrap(
@@ -382,19 +417,37 @@ export async function getServerSideProps(context) {
                         url,
                     );
 
-                    const response = await fetch(url, { headers: authHeaders });
-                    if (!response.ok) {
-                        throw new Error(
-                            `HTTP error! status: ${response.status}`,
-                        );
-                    }
+                    try {
+                        const response = await fetch(url, {
+                            headers: authHeaders,
+                        });
 
-                    const data = await response.json();
-                    console.log(
-                        '[Raffle SSR] Participants count:',
-                        data?.data?.length,
-                    );
-                    return data;
+                        if (!response.ok) {
+                            // For 5xx errors, throw to trigger cache fallback
+                            if (response.status >= 500) {
+                                throw new Error(
+                                    `Backend error (${response.status}): Server might be waking up`,
+                                );
+                            }
+
+                            throw new Error(
+                                `HTTP error! status: ${response.status}`,
+                            );
+                        }
+
+                        const data = await response.json();
+                        console.log(
+                            '[Raffle SSR] Participants count:',
+                            data?.data?.length,
+                        );
+                        return data;
+                    } catch (fetchError) {
+                        console.error(
+                            '[Raffle SSR] Participants fetch error:',
+                            fetchError.message,
+                        );
+                        throw fetchError;
+                    }
                 };
 
                 const participantsData = await cacheService.wrap(
@@ -426,14 +479,30 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/raffle/all`;
             console.log('[Raffle SSR] Fetching all raffles from:', url);
 
-            const response = await fetch(url, { headers: authHeaders });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            try {
+                const response = await fetch(url, { headers: authHeaders });
 
-            const data = await response.json();
-            console.log('[Raffle SSR] Total raffles:', data?.data?.length);
-            return data;
+                if (!response.ok) {
+                    // For 5xx errors, throw to trigger cache fallback
+                    if (response.status >= 500) {
+                        throw new Error(
+                            `Backend error (${response.status}): Server might be waking up`,
+                        );
+                    }
+
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('[Raffle SSR] Total raffles:', data?.data?.length);
+                return data;
+            } catch (fetchError) {
+                console.error(
+                    '[Raffle SSR] All raffles fetch error:',
+                    fetchError.message,
+                );
+                throw fetchError;
+            }
         };
 
         const allRafflesData = await cacheService.wrap(
@@ -472,12 +541,13 @@ export async function getServerSideProps(context) {
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
 
+        // Return null to trigger client-side fallback to localStorage
         return {
             props: {
                 currentRaffle: null,
-                registeredResidents: [],
-                previousRaffles: [],
-                error: error.message || 'Failed to load raffle data',
+                registeredResidents: null,
+                previousRaffles: null,
+                error: null, // Don't pass error to avoid showing error message, let client handle it
             },
         };
     } finally {
