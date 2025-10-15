@@ -46,21 +46,11 @@ export async function fetcher(url, options = {}) {
     // If URL is relative, prepend the API base URL
     const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 
-    // Get current Supabase session token (only in browser)
-    let accessToken = null;
-    if (typeof window !== 'undefined') {
-        try {
-            const {
-                data: { session },
-            } = await supabase.auth.getSession();
-            accessToken = session?.access_token;
-        } catch (error) {
-            console.warn(
-                '[fetcher] Could not get Supabase session:',
-                error.message,
-            );
-        }
-    }
+    // Get current Supabase session token
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
 
     const config = {
         ...defaultConfig,
@@ -192,6 +182,3 @@ export function buildQueryString(params) {
     const queryString = searchParams.toString();
     return queryString ? `?${queryString}` : '';
 }
-
-// Default export for convenience
-export default fetcher;
