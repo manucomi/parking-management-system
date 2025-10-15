@@ -8,6 +8,8 @@ import styles from './residents.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 import { createClient } from '@/utils/supabase/server';
+import useResilientData from '@/hooks/useResilientData';
+import fetcher from '@/utils/fetcher';
 
 // Server-side cache service
 const cacheService = new NetworkFirstCacheService({
@@ -19,7 +21,20 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
     const [q, setQ] = useState('');
     const [page, setPage] = useState(1);
     const [open, setOpen] = useState(false);
-    const [residents, setResidents] = useState(initialResidents || []);
+
+    // Use resilient data hook with multi-level cache
+    const { data, isLoading, isStale, error, refresh } = useResilientData({
+        initialData: initialResidents,
+        cacheKey: 'residents-list',
+        fetchFn: async ({ signal }) => {
+            const response = await fetcher('/api/residents', { signal });
+            return response.data || [];
+        },
+        timeout: 5000,
+        cacheTTL: 5 * 60 * 1000, // 5 minutes
+    });
+
+    const residents = data || [];
 
     const filtered = useMemo(
         () =>
@@ -69,12 +84,6 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
                     onChange={setQ}
                 />
 
-                {serverError && (
-                    <div className={styles.error}>
-                        Error loading residents: {serverError}
-                    </div>
-                )}
-
                 <section className={styles.card}>
                     <Table
                         columns={[
@@ -85,6 +94,8 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
                             { header: 'Parking Status', key: 'status' },
                         ]}
                         data={tableData}
+                        isLoading={isLoading && !residents.length}
+                        error={error}
                     />
                     <div className={styles.footer}>
                         <span>
@@ -226,10 +237,10 @@ export async function getServerSideProps(context) {
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
 
-        // Return empty array on error
+        // Return null to trigger client-side fallback to localStorage
         return {
             props: {
-                residents: [],
+                residents: null,
                 error: error.message || 'Failed to load residents',
             },
         };

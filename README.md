@@ -236,5 +236,3 @@ See detailed documentation:
 - Authentication implemented
 - Backend tests pending
 - Ready for production hardening
-
-See [ASSESSMENT_SUMMARY.md](ASSESSMENT_SUMMARY.md) for complete details.
