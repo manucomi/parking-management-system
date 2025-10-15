@@ -142,3 +142,5 @@ export function useResilientData({
         refresh,
     };
 }
+
+export default useResilientData;
