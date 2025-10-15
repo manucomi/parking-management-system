@@ -1,5 +1,11 @@
 # frontend
 
+## 0.4.1
+
+### Patch Changes
+
+- fefd083: Fix fetcher utility export
+
 ## 0.4.0
 
 ### Minor Changes
