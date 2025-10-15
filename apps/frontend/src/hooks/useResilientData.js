@@ -32,6 +32,50 @@ export function useResilientData({
     const [error, setError] = useState(null);
     const [cacheChecked, setCacheChecked] = useState(!!initialData); // Track if we've checked cache
 
+    // Cache initialData from SSR if present
+    useEffect(() => {
+        if (initialData && typeof window !== 'undefined') {
+            try {
+                const cacheData = {
+                    data: initialData,
+                    timestamp: Date.now(),
+                };
+
+                console.log('[useResilientData] About to cache:', {
+                    key: cacheKey,
+                    dataType: Array.isArray(initialData)
+                        ? 'array'
+                        : typeof initialData,
+                    dataLength: Array.isArray(initialData)
+                        ? initialData.length
+                        : 'N/A',
+                });
+
+                localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+
+                // Verify it was saved
+                const verification = localStorage.getItem(cacheKey);
+                if (verification) {
+                    console.log(
+                        '[useResilientData] ✅ Cached SSR data in localStorage:',
+                        cacheKey,
+                    );
+                } else {
+                    console.error(
+                        '[useResilientData] ❌ Failed to verify cache save:',
+                        cacheKey,
+                    );
+                }
+            } catch (err) {
+                console.error(
+                    '[useResilientData] Failed to cache SSR data:',
+                    err.name,
+                    err.message,
+                );
+            }
+        }
+    }, [initialData, cacheKey]);
+
     // Load from localStorage if SSR data is missing
     useEffect(() => {
         if (!initialData && typeof window !== 'undefined') {
@@ -89,7 +133,7 @@ export function useResilientData({
     const refresh = async () => {
         // If we have cached data, don't show loading spinner during background refresh
         const hasExistingData = !!data;
-        
+
         if (!hasExistingData) {
             setIsLoading(true);
         }
@@ -126,7 +170,7 @@ export function useResilientData({
             }
         } catch (err) {
             console.error('[useResilientData] Fetch failed:', err.message);
-            
+
             // Only set error if we don't have cached data to show
             if (!hasExistingData) {
                 setError(err.message);
