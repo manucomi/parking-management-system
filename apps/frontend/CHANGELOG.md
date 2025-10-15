@@ -1,5 +1,11 @@
 # frontend
 
+## 0.4.3
+
+### Patch Changes
+
+- 1ec43b5: fix: cache SSR data to localStorage for resilient offline experience
+
 ## 0.4.2
 
 ### Patch Changes
