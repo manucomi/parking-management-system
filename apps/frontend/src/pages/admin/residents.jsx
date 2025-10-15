@@ -3,12 +3,11 @@ import Table from '@/components/Table/Table';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Pagination from '@/components/Pagination/Pagination';
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
+import { withAuth } from '@/components/withAuth';
 import styles from './residents.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
 import { createClient } from '@/utils/supabase/server';
-import useResilientData from '@/hooks/useResilientData';
-import fetcher from '@/utils/fetcher';
 
 // Server-side cache service
 const cacheService = new NetworkFirstCacheService({
@@ -20,20 +19,7 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
     const [q, setQ] = useState('');
     const [page, setPage] = useState(1);
     const [open, setOpen] = useState(false);
-
-    // Use resilient data hook with multi-level cache
-    const { data, isLoading, isStale, error, refresh } = useResilientData({
-        initialData: initialResidents,
-        cacheKey: 'residents-list',
-        fetchFn: async ({ signal }) => {
-            const response = await fetcher('/api/residents', { signal });
-            return response.data || [];
-        },
-        timeout: 5000,
-        cacheTTL: 5 * 60 * 1000, // 5 minutes
-    });
-
-    const residents = data || [];
+    const [residents, setResidents] = useState(initialResidents || []);
 
     const filtered = useMemo(
         () =>
@@ -83,6 +69,12 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
                     onChange={setQ}
                 />
 
+                {serverError && (
+                    <div className={styles.error}>
+                        Error loading residents: {serverError}
+                    </div>
+                )}
+
                 <section className={styles.card}>
                     <Table
                         columns={[
@@ -93,8 +85,6 @@ function ResidentsPage({ residents: initialResidents, error: serverError }) {
                             { header: 'Parking Status', key: 'status' },
                         ]}
                         data={tableData}
-                        isLoading={isLoading && !residents.length}
-                        error={error}
                     />
                     <div className={styles.footer}>
                         <span>
@@ -193,43 +183,28 @@ export async function getServerSideProps(context) {
             const url = `${API_URL}/api/residents`;
             console.log('Fetching from:', url);
 
-            try {
-                // Forward auth token to API request
-                const response = await fetch(url, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                console.log('Response status:', response.status);
+            // Forward auth token to API request
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            console.log('Response status:', response.status);
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Response error body:', errorText);
-                    
-                    // For 5xx errors, throw to trigger cache fallback
-                    if (response.status >= 500) {
-                        throw new Error(
-                            `Backend error (${response.status}): Server might be waking up`,
-                        );
-                    }
-                    
-                    // For 4xx errors, throw with details
-                    throw new Error(
-                        `HTTP error! status: ${response.status}, body: ${errorText}`,
-                    );
-                }
-
-                const data = await response.json();
-                console.log(
-                    'Response data:',
-                    JSON.stringify(data).substring(0, 200),
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Response error body:', errorText);
+                throw new Error(
+                    `HTTP error! status: ${response.status}, body: ${errorText}`,
                 );
-                return data;
-            } catch (fetchError) {
-                // Log but re-throw to let cache service handle it
-                console.error('Fetch error:', fetchError.message);
-                throw fetchError;
             }
+
+            const data = await response.json();
+            console.log(
+                'Response data:',
+                JSON.stringify(data).substring(0, 200),
+            );
+            return data;
         };
 
         // Wrap the fetch with cache (network-first strategy)
@@ -251,11 +226,11 @@ export async function getServerSideProps(context) {
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
 
-        // Return null to trigger client-side fallback to localStorage
+        // Return empty array on error
         return {
             props: {
-                residents: null,
-                error: null, // Don't pass error to avoid showing error message, let client handle it
+                residents: [],
+                error: error.message || 'Failed to load residents',
             },
         };
     } finally {
