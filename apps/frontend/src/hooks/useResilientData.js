@@ -30,6 +30,7 @@ export function useResilientData({
     const [isLoading, setIsLoading] = useState(!initialData);
     const [isStale, setIsStale] = useState(false);
     const [error, setError] = useState(null);
+    const [cacheChecked, setCacheChecked] = useState(!!initialData); // Track if we've checked cache
 
     // Load from localStorage if SSR data is missing
     useEffect(() => {
@@ -48,6 +49,11 @@ export function useResilientData({
                         setData(cachedData);
                         setIsStale(true); // Mark as stale to trigger refresh
                         setIsLoading(false);
+                    } else {
+                        console.log(
+                            `[useResilientData] Cache expired (${Math.round(age / 1000)}s old)`,
+                            cacheKey,
+                        );
                     }
                 }
             } catch (err) {
@@ -55,6 +61,8 @@ export function useResilientData({
                     '[useResilientData] Error loading from localStorage:',
                     err,
                 );
+            } finally {
+                setCacheChecked(true); // Mark cache as checked
             }
         }
     }, [initialData, cacheKey, cacheTTL]);
@@ -79,7 +87,12 @@ export function useResilientData({
 
     // Background refresh
     const refresh = async () => {
-        setIsLoading(true);
+        // If we have cached data, don't show loading spinner during background refresh
+        const hasExistingData = !!data;
+        
+        if (!hasExistingData) {
+            setIsLoading(true);
+        }
         setError(null);
 
         try {
@@ -113,14 +126,19 @@ export function useResilientData({
             }
         } catch (err) {
             console.error('[useResilientData] Fetch failed:', err.message);
-            setError(err.message);
+            
+            // Only set error if we don't have cached data to show
+            if (!hasExistingData) {
+                setError(err.message);
+            } else {
+                console.log(
+                    '[useResilientData] Keeping cached data despite fetch failure',
+                );
+            }
 
             // If we have data (from cache), keep showing it
             if (data) {
                 setIsStale(true);
-                console.log(
-                    '[useResilientData] Using cached data due to fetch failure',
-                );
             }
         } finally {
             setIsLoading(false);
@@ -128,11 +146,29 @@ export function useResilientData({
     };
 
     // Auto-refresh on mount if data is stale or missing
+    // ONLY after we've checked localStorage
     useEffect(() => {
-        if (isStale || !data) {
+        if (!cacheChecked) {
+            return; // Wait for cache check to complete
+        }
+
+        // Only refresh if we truly have no data and we're not already loading
+        if (!data && !isLoading) {
+            console.log(
+                '[useResilientData] No data available, attempting fresh fetch',
+                cacheKey,
+            );
             refresh();
         }
-    }, []); // Only on mount
+        // If data is stale (from cache), do a background refresh
+        else if (isStale) {
+            console.log(
+                '[useResilientData] Data is stale, refreshing in background',
+                cacheKey,
+            );
+            refresh();
+        }
+    }, [cacheChecked]); // Only run when cache check completes
 
     return {
         data,
