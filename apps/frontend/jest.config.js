@@ -28,6 +28,7 @@ const customJestConfig = {
         'utils/fetcher.js',
         'hooks/useAuth.js',
         'hooks/useApi.js',
+        'hooks/useResilientData.js',
         'services/index.js',
         'pages/resident/',
         'middleware.js',

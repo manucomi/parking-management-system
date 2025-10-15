@@ -3,7 +3,6 @@ import Table from '@/components/Table/Table';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import Pagination from '@/components/Pagination/Pagination';
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
-import { withAuth } from '@/components/withAuth';
 import styles from './residents.module.scss';
 import { useMemo, useState } from 'react';
 import NetworkFirstCacheService from '@/utils/NetworkFirstCacheService/NetworkFirstCacheService';
