@@ -52,22 +52,35 @@ NEXT_PUBLIC_API_URL=http://localhost:4000  # or production URL
 
 ### 2. Protect Admin Pages
 
-Add `withAuth` to all admin pages:
+Authentication is handled automatically in `getServerSideProps` using Supabase SSR. All admin pages already verify the user session on the server before rendering:
 
 ```jsx
-// apps/frontend/src/pages/admin/index.jsx
-import withAdminLayout from '@/components/Layout/withAdminLayout';
-import { withAuth } from '@/components/withAuth';
+// apps/frontend/src/pages/admin/residents.jsx (example)
+export async function getServerSideProps(context) {
+    // Create Supabase server client with cookie handling
+    const supabase = createClient(context);
 
-function AdminDashboard() {
-    // ... existing code
+    // Get authenticated user from Supabase (reads from cookies)
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    // If not authenticated, redirect to login
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    // Continue with data fetching...
 }
-
-// Wrap with both HOCs
-export default withAuth(withAdminLayout(AdminDashboard));
 ```
 
-Apply to:
+This pattern is already implemented in:
 
 - `pages/admin/index.jsx`
 - `pages/admin/residents.jsx`
@@ -111,12 +124,12 @@ export default function AdminLayout({ children }) {
 
 ### 4. Create Resident Dashboard
 
-If resident pages don't exist yet, create them:
+If resident pages don't exist yet, create them with SSR authentication:
 
 ```jsx
 // apps/frontend/src/pages/resident/index.jsx
-import { withAuth } from '@/components/withAuth';
 import { useAuth } from '@/hooks/useAuth';
+import { createClient } from '@/utils/supabase/server';
 
 function ResidentDashboard() {
     const { user, logout } = useAuth();
@@ -137,7 +150,26 @@ function ResidentDashboard() {
     );
 }
 
-export default withAuth(ResidentDashboard);
+// Server-side authentication
+export async function getServerSideProps(context) {
+    const supabase = createClient(context);
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
+    return { props: {} };
+}
+
+export default ResidentDashboard;
 ```
 
 ### 5. Supabase Dashboard Configuration
