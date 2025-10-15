@@ -1,6 +1,12 @@
 import styles from './Table.module.scss';
 
-export default function Table({ columns = [], data = [], renderRow }) {
+export default function Table({
+    columns = [],
+    data = [],
+    renderRow,
+    isLoading = false,
+    error = null,
+}) {
     return (
         <div className={styles.wrap}>
             <table className={styles.table}>
@@ -12,7 +18,27 @@ export default function Table({ columns = [], data = [], renderRow }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.length === 0 ? (
+                    {isLoading ? (
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className={styles.empty}
+                            >
+                                <div className={styles.spinner}></div>
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : error && data.length === 0 ? (
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className={styles.error}
+                            >
+                                Oops! Something went wrong. Please try reloading
+                                the page in a moment.
+                            </td>
+                        </tr>
+                    ) : data.length === 0 ? (
                         <tr>
                             <td
                                 colSpan={columns.length}

@@ -49,3 +49,35 @@ This document outlines the performance approach and optimizations for the Parkin
 - React Query for client-side caching
 - Brotli compression for static assets
 - Database query profiling and optimization
+
+## Known Limitations & Mitigations
+
+**Render Free Tier Sleep Mode:**
+
+Render's free tier puts the backend to sleep after 15 minutes of inactivity, causing 30-60 second wake-up delays.
+
+**Current Impact:**
+- Users may see errors when backend is asleep
+- Authentication cannot complete until backend wakes
+- SSR cache is bypassed during auth check
+
+**Proposed Mitigation:**
+- Client-side localStorage cache fallback
+- 5-second timeout with graceful degradation
+- Optimistic UI showing cached data during wake-up
+- Background polling to detect when backend is available
+
+See [Render Sleep Mitigation Strategy](./RENDER_SLEEP_MITIGATION.md) for full implementation details.
+
+**Alternative Solutions:**
+1. Upgrade to Render paid tier ($7/month) for always-on backend
+2. Implement keep-alive cron job (uses CI/CD minutes)
+3. Migrate to platform with better free tier (Railway, Fly.io)
+
+---
+
+**Related:**
+
+- [Render Sleep Mitigation](./RENDER_SLEEP_MITIGATION.md)
+- [System Architecture](./system-architecture.md)
+- [Caching Strategy ADR](../design-docs/adr/ADR-004-caching-strategy-ssr-and-redis.md)
