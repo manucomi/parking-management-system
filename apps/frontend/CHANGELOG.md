@@ -1,5 +1,11 @@
 # frontend
 
+## 0.4.2
+
+### Patch Changes
+
+- 0af27e5: Update refresh data logic
+
 ## 0.4.1
 
 ### Patch Changes
